@@ -1,0 +1,6 @@
+{
+  "name": "FLOWER rchii — 3D Custom Bouquet Studio",
+  "description": "WHERE FLOWER IS BLOOM. Sculpt luxury custom bouquets stem-by-stem in an interactive 3D floral atelier with live gift tags and seamless INR checkout.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
