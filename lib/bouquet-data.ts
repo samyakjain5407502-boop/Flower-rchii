@@ -160,7 +160,7 @@ export const FREE_DELIVERY_THRESHOLD_INR = 2500;
 export const BLOOMS: BloomDefinition[] = [
   {
     id: 'red-rose',
-    name: 'Velvet Red Rose',
+    name: 'Red Rose',
     botanicalNote: 'Rich deep-red rose with soft petals',
     priceInr: 120,
     swatchPrimary: '#7F1D2B',
@@ -173,7 +173,7 @@ export const BLOOMS: BloomDefinition[] = [
   },
   {
     id: 'blush-rose',
-    name: 'Blush Pink Rose',
+    name: 'Light Pink Rose',
     botanicalNote: 'Soft pastel-pink garden rose',
     priceInr: 120,
     swatchPrimary: '#E3AEB5',
@@ -186,7 +186,7 @@ export const BLOOMS: BloomDefinition[] = [
   },
   {
     id: 'peony',
-    name: 'Dutch Peony',
+    name: 'Pink Peony',
     botanicalNote: 'Full, fluffy blush-pink flower',
     priceInr: 280,
     swatchPrimary: '#F2C6CE',
@@ -212,7 +212,7 @@ export const BLOOMS: BloomDefinition[] = [
   },
   {
     id: 'lily',
-    name: 'Oriental White Lily',
+    name: 'White Lily',
     botanicalNote: 'Large, fragrant white star-shaped lily',
     priceInr: 220,
     swatchPrimary: '#FBF9F4',
@@ -262,7 +262,7 @@ export const BLOOM_MAP: Record<BloomId, BloomDefinition> = BLOOMS.reduce(
 export const WRAP_OPTIONS: WrapOption[] = [
   {
     id: 'light-sage',
-    name: 'Light Sage Matte Paper',
+    name: 'Light Green Matte Paper',
     subtitle: 'Soft matte green wrapping paper',
     outerColor: '#A7C0A8',
     innerColor: '#EBF1EC',
@@ -273,7 +273,7 @@ export const WRAP_OPTIONS: WrapOption[] = [
   },
   {
     id: 'champagne-cream',
-    name: 'Champagne Cream Wrap',
+    name: 'Cream Linen Paper',
     subtitle: 'Warm cream paper with gold trim',
     outerColor: '#EDE0C9',
     innerColor: '#FAF7F2',
@@ -309,7 +309,7 @@ export const RIBBON_OPTIONS: RibbonOption[] = [
   },
   {
     id: 'forest-emerald',
-    name: 'Forest Emerald Silk',
+    name: 'Dark Green Silk Ribbon',
     subtitle: 'Rich dark green silk ribbon',
     color: '#17271C',
     roughness: 0.35,
@@ -320,7 +320,7 @@ export const RIBBON_OPTIONS: RibbonOption[] = [
   },
   {
     id: 'soft-sage',
-    name: 'Soft Sage Organza',
+    name: 'Light Green Sheer Ribbon',
     subtitle: 'Light, sheer sage green ribbon',
     color: '#A7C0A8',
     roughness: 0.4,
@@ -414,10 +414,10 @@ export const SLOTS: BouquetSlot[] = [
 export const SIGNATURE_PRESETS: SignaturePreset[] = [
   {
     id: 'forest-champagne',
-    name: 'The Forest & Champagne',
+    name: 'Classic Red & Pink',
     subtitle: 'Best Seller',
     description:
-      'Red and pink roses paired with white lilies and fresh eucalyptus in our signature deep green wrap.',
+      'Red and pink roses with white lilies and green leaves in our dark green wrap.',
     wrapId: 'deep-forest',
     ribbonId: 'champagne-gold',
     stems: {
@@ -436,10 +436,10 @@ export const SIGNATURE_PRESETS: SignaturePreset[] = [
   },
   {
     id: 'sage-mist-serenity',
-    name: 'Sage Mist Serenity',
+    name: 'Fresh Sage & White',
     subtitle: 'Fresh & Calm',
     description:
-      'White lilies, soft tulips, and delicate baby’s breath framed with fresh eucalyptus in light sage paper.',
+      "White lilies, soft tulips, and baby's breath with fresh green leaves in light green paper.",
     wrapId: 'light-sage',
     ribbonId: 'forest-emerald',
     stems: {
@@ -458,10 +458,10 @@ export const SIGNATURE_PRESETS: SignaturePreset[] = [
   },
   {
     id: 'blush-atelier',
-    name: 'Blush Garden',
-    subtitle: 'Soft & Romantic',
+    name: 'Soft Pink Mix',
+    subtitle: 'Soft & Sweet',
     description:
-      'Full Dutch peonies, soft blush roses, and pastel tulips wrapped in warm cream paper with a soft sage ribbon.',
+      'Full pink peonies, blush roses, and soft tulips wrapped in cream paper with a light green ribbon.',
     wrapId: 'champagne-cream',
     ribbonId: 'soft-sage',
     stems: {

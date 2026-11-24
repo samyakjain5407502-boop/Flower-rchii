@@ -7,6 +7,13 @@
 }
 
 @layer base {
+  /* Fix 4: Strictly enforce zero horizontal scroll on all viewports */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   html,
   body {
     background-color: #FAF7F2;

@@ -21,6 +21,82 @@ interface SignatureCollectionProps {
   onQuickAddPreset: (preset: SignaturePreset) => void;
 }
 
+/**
+ * Maps each preset id → the flower image paths that visually represent it,
+ * drawn from /public/flowers/. Layered smallest-to-largest for a cluster effect.
+ */
+const PRESET_FLOWER_PREVIEW: Record<string, string[]> = {
+  'forest-champagne': [
+    '/flowers/eucalyptus.png',
+    '/flowers/blush-rose.png',
+    '/flowers/lily.png',
+    '/flowers/red-rose.png',
+  ],
+  'sage-mist-serenity': [
+    '/flowers/eucalyptus.png',
+    '/flowers/tulip.png',
+    '/flowers/lily.png',
+    '/flowers/blush-rose.png',
+  ],
+  'blush-atelier': [
+    '/flowers/eucalyptus.png',
+    '/flowers/tulip.png',
+    '/flowers/blush-rose.png',
+    '/flowers/peony.png',
+  ],
+};
+
+/** Layered bouquet-cluster preview using real cutout PNGs instead of plain colour dots. */
+function FlowerCluster({ presetId }: { presetId: string }) {
+  const paths = PRESET_FLOWER_PREVIEW[presetId] ?? [
+    '/flowers/red-rose.png',
+    '/flowers/blush-rose.png',
+    '/flowers/peony.png',
+    '/flowers/eucalyptus.png',
+  ];
+
+  return (
+    <div
+      className="relative flex items-end justify-center"
+      style={{ height: 128, minHeight: 128 }}
+      aria-hidden="true"
+    >
+      {paths.map((src, i) => {
+        // Fan out horizontally: 4 images spread ±90px centred at 0
+        const spread = [-54, -18, 18, 54];
+        const offsetX = spread[i] ?? i * 36 - 54;
+        // Stagger heights slightly so they overlap naturally
+        const offsetY = [8, 0, 4, 10][i] ?? 0;
+        const size = [72, 80, 86, 76][i] ?? 72;
+        const zIndex = i + 1;
+
+        return (
+          <span
+            key={src}
+            className="absolute bottom-0"
+            style={{
+              left: '50%',
+              transform: `translateX(calc(-50% + ${offsetX}px)) translateY(${offsetY}px)`,
+              zIndex,
+              width: size,
+              height: size,
+            }}
+          >
+            <Image
+              src={src}
+              alt=""
+              fill
+              sizes="90px"
+              className="object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+            />
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
 export function SignatureCollection({
   activePresetName,
   availableBouquetPhotos,
@@ -30,7 +106,7 @@ export function SignatureCollection({
   return (
     <section
       id="collection"
-      className="py-16 sm:py-24 px-5 sm:px-8 bg-[#FAF7F2] border-t border-[#A7C0A8]/35"
+      className="py-16 sm:py-24 px-5 sm:px-8 bg-[#FAF7F2] border-t border-[#A7C0A8]/35 overflow-visible"
     >
       <div className="max-w-[1440px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -49,6 +125,7 @@ export function SignatureCollection({
           </p>
         </div>
 
+        {/* Fix 4: grid-cols-1 on mobile (<768px), 3-col on md+ */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {SIGNATURE_PRESETS.map((preset, index) => {
             const pricing = getBouquetPricing({
@@ -79,14 +156,16 @@ export function SignatureCollection({
                   delay: index * 0.08,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className={`group flex flex-col justify-between rounded-[24px] sm:rounded-[28px] p-5 sm:p-7 border transition-all duration-200 hover:-translate-y-0.5 ${
+                /* Fix 1: flex-col with overflow-visible so card content never clips */
+                className={`group flex flex-col rounded-[24px] sm:rounded-[28px] border transition-all duration-200 hover:-translate-y-0.5 overflow-visible ${
                   isLoaded
                     ? 'bg-[#EBF1EC] border-[#4F6D52]'
                     : 'bg-[#F5F1E9]/65 border-[#C8B288]/45 hover:border-[#4F6D52]/60'
                 }`}
               >
-                <div>
-                  {/* Editorial Arch Header: real photo (/public/bouquets/<id>.jpg) when available, else botanical palette */}
+                {/* Inner content wrapper with proper padding */}
+                <div className="p-5 sm:p-7 flex flex-col flex-1">
+                  {/* Top visual: real photo when available, else real flower cluster */}
                   {availableBouquetPhotos?.[preset.id] ? (
                     <div className="relative mb-6 rounded-t-[110px] rounded-b-[20px] bg-[#FAF7F2] border border-[#C8B288]/55 overflow-hidden">
                       <div className="relative w-full aspect-[4/3] bg-[#EBF1EC]">
@@ -108,24 +187,17 @@ export function SignatureCollection({
                       </div>
                     </div>
                   ) : (
-                    <div className="relative mb-6 rounded-t-[110px] rounded-b-[20px] p-5 bg-[#FAF7F2] border border-[#C8B288]/45 overflow-hidden">
-                      <div className="flex items-center justify-between text-[11px] text-[#4F6D52] mb-5">
+                    /* Fix 2: Real flower cluster preview instead of colour dots */
+                    <div className="relative mb-6 rounded-t-[110px] rounded-b-[20px] pt-5 pb-4 px-5 bg-[#FAF7F2] border border-[#C8B288]/45 overflow-visible">
+                      <div className="flex items-center justify-between text-[11px] text-[#4F6D52] mb-4">
                         <span>{preset.subtitle}</span>
                         <span className="tabular-nums font-medium text-[#17271C]">
                           {pricing.totalStems} stems
                         </span>
                       </div>
 
-                      {/* Visual botanical color composition */}
-                      <div className="flex items-center justify-center -space-x-3 py-3">
-                        {preset.palette.map((hex, i) => (
-                          <span
-                            key={`${preset.id}-c-${i}`}
-                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-[#FAF7F2] shadow-sm transition-transform duration-300 group-hover:scale-105"
-                            style={{ backgroundColor: hex }}
-                          />
-                        ))}
-                      </div>
+                      {/* Layered real flower cutout preview */}
+                      <FlowerCluster presetId={preset.id} />
 
                       <div className="mt-4 pt-3 border-t border-[#C8B288]/30 flex items-center justify-center gap-2 text-[11px] text-[#4F6D52] text-center">
                         <span className="truncate">{wrap.name}</span>
@@ -135,7 +207,7 @@ export function SignatureCollection({
                     </div>
                   )}
 
-                  {/* Card Copy */}
+                  {/* Fix 1: Card copy — no overflow clipping, all text 100% visible */}
                   <div className="flex items-baseline justify-between gap-3 mb-2">
                     <h3 className="font-serif text-2xl text-[#17271C] leading-snug">
                       {preset.name}
@@ -145,35 +217,38 @@ export function SignatureCollection({
                     </span>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-[#17271C]/72 leading-relaxed mb-4">
+                  <p className="text-xs sm:text-sm text-[#17271C]/72 leading-relaxed mb-3">
                     {preset.description}
                   </p>
 
-                  {/* Clean unboxed recipe list */}
-                  <p className="text-xs text-[#4F6D52] leading-relaxed mb-6">
+                  {/* Stem breakdown — fully visible */}
+                  <p className="text-xs text-[#4F6D52] leading-relaxed mb-5">
                     {stemSummary.join(' · ')}
                   </p>
-                </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-2 sm:gap-2.5 pt-4 border-t border-[#C8B288]/35">
-                  <button
-                    type="button"
-                    onClick={() => onSelectPreset(preset)}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] hover:bg-[#243B2B] text-xs font-semibold tracking-wide transition-colors whitespace-nowrap"
-                  >
-                    <span>{isLoaded ? 'Selected in 3D' : 'Edit in 3D'}</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
-                  </button>
+                  {/* Spacer pushes actions to bottom */}
+                  <div className="flex-1" />
 
-                  <button
-                    type="button"
-                    onClick={() => onQuickAddPreset(preset)}
-                    className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full border border-[#4F6D52]/50 text-[#17271C] hover:bg-[#4F6D52] hover:text-[#FAF7F2] text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
-                  >
-                    <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-                    <span>Add to Bag</span>
-                  </button>
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 sm:gap-2.5 pt-4 border-t border-[#C8B288]/35">
+                    <button
+                      type="button"
+                      onClick={() => onSelectPreset(preset)}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] hover:bg-[#243B2B] text-xs font-semibold tracking-wide transition-colors whitespace-nowrap"
+                    >
+                      <span>{isLoaded ? 'Selected in 3D' : 'Edit in 3D'}</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onQuickAddPreset(preset)}
+                      className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full border border-[#4F6D52]/50 text-[#17271C] hover:bg-[#4F6D52] hover:text-[#FAF7F2] text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+                      <span>Add to Bag</span>
+                    </button>
+                  </div>
                 </div>
               </motion.article>
             );

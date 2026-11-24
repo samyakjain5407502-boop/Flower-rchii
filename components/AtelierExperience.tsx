@@ -8,6 +8,7 @@ import React, {
   useState,
   useSyncExternalStore,
 } from 'react';
+import Image from 'next/image';
 import { AnimatePresence, motion } from 'motion/react';
 import { Check, Flower2, Gift, MessageCircle, Sparkles } from 'lucide-react';
 import {
@@ -464,13 +465,13 @@ export function AtelierExperience({
   };
 
   return (
-    <div className="min-h-screen w-full max-w-[100vw] flex flex-col bg-[#FAF7F2] text-[#17271C] overflow-x-clip">
+    <div className="min-h-screen w-full max-w-[100vw] flex flex-col bg-[#FAF7F2] text-[#17271C] overflow-x-hidden">
       <Navbar
         cartCount={totalCartCount}
         onOpenCart={() => setCartOpen(true)}
       />
 
-      <main className="flex-1 w-full max-w-[100vw]">
+      <main className="flex-1 w-full max-w-[100vw] overflow-x-hidden">
         {/* Section 1: Editorial Brand Hero ("The Bloom Iris") */}
         <EditorialHero
           availableAssets={availableAssets}
@@ -606,7 +607,16 @@ export function AtelierExperience({
           <div className="max-w-[1440px] mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 pb-12 border-b border-[#C8B288]/20">
               <div className="space-y-2.5">
-                <Flower2 className="w-5 h-5 text-[#C8B288]" />
+                {/* Fix 3: Real logo instead of drawn Flower2 icon */}
+                <div className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-[#C8B288]/60 overflow-hidden bg-[#17271C]">
+                  <Image
+                    src="/logo.png"
+                    alt="FLOWER rchii"
+                    width={28}
+                    height={28}
+                    className="object-contain"
+                  />
+                </div>
                 <h3 className="font-serif text-2xl text-[#FAF7F2]">
                   Hand-Arranged Fresh Flowers
                 </h3>

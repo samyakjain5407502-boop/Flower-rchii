@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'motion/react';
 import {
   Calendar,
   Copy,
-  Flower2,
   MapPin,
   MessageCircle,
 } from 'lucide-react';
@@ -99,9 +99,17 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
           transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col items-center text-center mb-10 sm:mb-12"
         >
+          {/* Fix 3: Real logo in a Champagne Gold oval frame instead of drawn Flower2 icon */}
           <div className="relative inline-flex items-center justify-center w-14 h-20 rounded-full border border-[#C8B288] bg-[#FAF7F2] mb-5 shadow-[0_6px_20px_rgba(23,39,28,0.06)]">
-            <div className="w-11 h-16 rounded-full border border-[#EDE0C9] flex items-center justify-center">
-              <Flower2 className="w-5 h-5 text-[#4F6D52]" />
+            <div className="w-11 h-16 rounded-full border border-[#EDE0C9] flex items-center justify-center overflow-hidden">
+              <Image
+                src="/logo.png"
+                alt="FLOWER rchii logo"
+                width={40}
+                height={56}
+                className="object-contain"
+                priority
+              />
             </div>
           </div>
 

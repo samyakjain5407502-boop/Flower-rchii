@@ -375,15 +375,15 @@ export function EditorialHero({
             Pick every flower, wrap, and card message yourself.
           </p>
 
-          {/* Static 3 Arch Story Panels */}
-          <div className="w-full flex md:grid md:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-2 mb-6">
+          {/* Static 3 Arch Story Panels (Clean single-column vertical stack on mobile < 768px, 3-col on md+) */}
+          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 pb-2 mb-6">
             {STORY_PANELS.map((panel) => {
               const hasPhoto = availableAssets.storyPhotos[panel.id];
               const fallbackDataUrl = cutouts?.[panel.fallbackBloom]?.dataUrl;
               return (
                 <article
                   key={panel.id}
-                  className="snap-center shrink-0 w-[76vw] max-w-[260px] md:w-auto md:max-w-none rounded-t-[180px] rounded-b-[22px] border border-[#C8B288]/75 bg-[#FAF7F2] overflow-hidden shadow-[0_12px_30px_rgba(23,39,28,0.08)]"
+                  className="w-full rounded-t-[180px] rounded-b-[22px] border border-[#C8B288]/75 bg-[#FAF7F2] overflow-hidden shadow-[0_12px_30px_rgba(23,39,28,0.08)]"
                 >
                   <div
                     className="relative h-36 sm:h-44 flex items-center justify-center overflow-hidden"
@@ -539,8 +539,8 @@ export function EditorialHero({
               Pick every flower, wrap, and card message yourself.
             </motion.p>
 
-            {/* Three Arch-Topped Story Panels (Desktop Row / Mobile Snapping Carousel) */}
-            <div className="w-full mt-3.5 sm:mt-6 flex md:grid md:grid-cols-3 gap-3.5 sm:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-1.5 px-6 sm:px-1 no-scrollbar">
+            {/* Three Arch-Topped Story Panels (Clean single-column vertical stack on mobile < 768px, 3-col on md+) */}
+            <div className="w-full mt-3.5 sm:mt-6 grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5 pb-1.5 px-4 sm:px-1">
               {STORY_PANELS.map((panel, idx) => {
                 const hasPhoto = availableAssets.storyPhotos[panel.id];
                 const fallbackDataUrl = cutouts?.[panel.fallbackBloom]?.dataUrl;
@@ -552,7 +552,7 @@ export function EditorialHero({
                       opacity: panelMotion[idx].opacity,
                       y: panelMotion[idx].y,
                     }}
-                    className="snap-center shrink-0 w-[68vw] max-w-[240px] md:w-auto md:max-w-none rounded-t-[180px] rounded-b-[20px] border border-[#C8B288]/75 bg-[#FAF7F2] overflow-hidden shadow-[0_12px_30px_rgba(23,39,28,0.09)] will-change-transform"
+                    className="w-full rounded-t-[180px] rounded-b-[20px] border border-[#C8B288]/75 bg-[#FAF7F2] overflow-hidden shadow-[0_12px_30px_rgba(23,39,28,0.09)] will-change-transform"
                   >
                     <div
                       className="relative h-28 sm:h-40 lg:h-44 flex items-center justify-center overflow-hidden"
