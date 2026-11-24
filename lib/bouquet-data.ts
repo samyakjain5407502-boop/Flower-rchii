@@ -161,7 +161,7 @@ export const BLOOMS: BloomDefinition[] = [
   {
     id: 'red-rose',
     name: 'Velvet Red Rose',
-    botanicalNote: 'Deep crimson cupped petals with velvet finish',
+    botanicalNote: 'Rich deep-red rose with soft petals',
     priceInr: 120,
     swatchPrimary: '#7F1D2B',
     swatchSecondary: '#A8293A',
@@ -174,7 +174,7 @@ export const BLOOMS: BloomDefinition[] = [
   {
     id: 'blush-rose',
     name: 'Blush Pink Rose',
-    botanicalNote: 'Soft garden-rose spiral in warm rose quartz',
+    botanicalNote: 'Soft pastel-pink garden rose',
     priceInr: 120,
     swatchPrimary: '#E3AEB5',
     swatchSecondary: '#F4D4D8',
@@ -187,7 +187,7 @@ export const BLOOMS: BloomDefinition[] = [
   {
     id: 'peony',
     name: 'Dutch Peony',
-    botanicalNote: 'Lush ruffled cloud bloom in champagne blush',
+    botanicalNote: 'Full, fluffy blush-pink flower',
     priceInr: 280,
     swatchPrimary: '#F2C6CE',
     swatchSecondary: '#FBF0F2',
@@ -200,7 +200,7 @@ export const BLOOMS: BloomDefinition[] = [
   {
     id: 'tulip',
     name: 'Pastel Tulip',
-    botanicalNote: 'Sculpted upright goblet petals in apricot cream',
+    botanicalNote: 'Fresh, upright soft-pink tulip',
     priceInr: 180,
     swatchPrimary: '#EFC3A8',
     swatchSecondary: '#F8DFC9',
@@ -213,7 +213,7 @@ export const BLOOMS: BloomDefinition[] = [
   {
     id: 'lily',
     name: 'Oriental White Lily',
-    botanicalNote: 'Star-curved alabaster trumpet with amber stamens',
+    botanicalNote: 'Large, fragrant white star-shaped lily',
     priceInr: 220,
     swatchPrimary: '#FBF9F4',
     swatchSecondary: '#D8A24A',
@@ -226,7 +226,7 @@ export const BLOOMS: BloomDefinition[] = [
   {
     id: 'babys-breath',
     name: "Baby's Breath Cloud",
-    botanicalNote: 'Airy branching pearl-white micro-floret sprigs',
+    botanicalNote: 'Delicate clusters of tiny white blooms',
     priceInr: 90,
     swatchPrimary: '#FAF8F3',
     swatchSecondary: '#CFD9CE',
@@ -239,7 +239,7 @@ export const BLOOMS: BloomDefinition[] = [
   {
     id: 'eucalyptus',
     name: 'Silver Dollar Eucalyptus',
-    botanicalNote: 'Arched botanical stems with matte sage coins',
+    botanicalNote: 'Fresh green leaves for a fuller look',
     priceInr: 80,
     swatchPrimary: '#5D7B61',
     swatchSecondary: '#98B29A',
@@ -263,7 +263,7 @@ export const WRAP_OPTIONS: WrapOption[] = [
   {
     id: 'light-sage',
     name: 'Light Sage Matte Paper',
-    subtitle: 'Botanical matte cotton-rag finish',
+    subtitle: 'Soft matte green wrapping paper',
     outerColor: '#A7C0A8',
     innerColor: '#EBF1EC',
     roughness: 0.92,
@@ -274,7 +274,7 @@ export const WRAP_OPTIONS: WrapOption[] = [
   {
     id: 'champagne-cream',
     name: 'Champagne Cream Wrap',
-    subtitle: 'Warm parchment linen with gold piping',
+    subtitle: 'Warm cream paper with gold trim',
     outerColor: '#EDE0C9',
     innerColor: '#FAF7F2',
     roughness: 0.92,
@@ -285,7 +285,7 @@ export const WRAP_OPTIONS: WrapOption[] = [
   {
     id: 'deep-forest',
     name: 'Deep Forest Green Paper',
-    subtitle: 'Signature FLOWER rchii velvet-matte wrap',
+    subtitle: 'Signature dark green matte wrap',
     outerColor: '#17271C',
     innerColor: '#4F6D52',
     roughness: 0.92,
@@ -299,7 +299,7 @@ export const RIBBON_OPTIONS: RibbonOption[] = [
   {
     id: 'champagne-gold',
     name: 'Champagne Gold Satin',
-    subtitle: 'Lustrous double-faced silk satin',
+    subtitle: 'Smooth, glossy gold satin ribbon',
     color: '#C8B288',
     roughness: 0.32,
     metalness: 0.22,
@@ -310,7 +310,7 @@ export const RIBBON_OPTIONS: RibbonOption[] = [
   {
     id: 'forest-emerald',
     name: 'Forest Emerald Silk',
-    subtitle: 'Deep botanical grosgrain silk weave',
+    subtitle: 'Rich dark green silk ribbon',
     color: '#17271C',
     roughness: 0.35,
     metalness: 0.14,
@@ -321,7 +321,7 @@ export const RIBBON_OPTIONS: RibbonOption[] = [
   {
     id: 'soft-sage',
     name: 'Soft Sage Organza',
-    subtitle: 'Sheer gossamer botanical ribbon',
+    subtitle: 'Light, sheer sage green ribbon',
     color: '#A7C0A8',
     roughness: 0.4,
     metalness: 0.08,
@@ -334,15 +334,15 @@ export const RIBBON_OPTIONS: RibbonOption[] = [
 export const ADDON_OPTIONS: AddonOption[] = [
   {
     id: 'dark-chocolates',
-    name: 'Artisanal Dark Chocolates',
-    description: 'Box of 9 single-origin 70% Madagascar cocoa truffles',
+    name: 'Dark Chocolate Box',
+    description: 'Box of 9 rich 70% dark chocolate truffles',
     priceInr: 450,
     accentColor: '#3B251D',
   },
   {
     id: 'soy-candle',
-    name: 'Botanical Soy Candle',
-    description: 'Hand-poured white tea, cedarwood & eucalyptus glass vessel',
+    name: 'Scented Soy Candle',
+    description: 'Hand-poured white tea & eucalyptus candle in a glass jar',
     priceInr: 650,
     accentColor: '#4F6D52',
   },
@@ -415,9 +415,9 @@ export const SIGNATURE_PRESETS: SignaturePreset[] = [
   {
     id: 'forest-champagne',
     name: 'The Forest & Champagne',
-    subtitle: 'Signature House Edition',
+    subtitle: 'Best Seller',
     description:
-      'Velvet red and blush roses crowned with oriental white lilies and eucalyptus inside our signature deep forest green wrap.',
+      'Red and pink roses paired with white lilies and fresh eucalyptus in our signature deep green wrap.',
     wrapId: 'deep-forest',
     ribbonId: 'champagne-gold',
     stems: {
@@ -430,16 +430,16 @@ export const SIGNATURE_PRESETS: SignaturePreset[] = [
       eucalyptus: 4,
     },
     addons: [],
-    giftNote: 'Where every petal speaks softly — crafted with love.',
+    giftNote: 'Made with love, just for you.',
     palette: ['#17271C', '#7F1D2B', '#FBF9F4', '#C8B288'],
     photoPath: '/bouquets/forest-champagne.jpg',
   },
   {
     id: 'sage-mist-serenity',
     name: 'Sage Mist Serenity',
-    subtitle: 'Botanical Daylight Study',
+    subtitle: 'Fresh & Calm',
     description:
-      'Alabaster lilies, pastel tulips, and airy clouds of baby’s breath framed by silver dollar eucalyptus in matte sage paper.',
+      'White lilies, soft tulips, and delicate baby’s breath framed with fresh eucalyptus in light sage paper.',
     wrapId: 'light-sage',
     ribbonId: 'forest-emerald',
     stems: {
@@ -452,16 +452,16 @@ export const SIGNATURE_PRESETS: SignaturePreset[] = [
       eucalyptus: 5,
     },
     addons: [],
-    giftNote: 'Wishing you calm mornings and timeless blooms.',
+    giftNote: 'Wishing you peaceful mornings and happy days.',
     palette: ['#A7C0A8', '#FBF9F4', '#EFC3A8', '#4F6D52'],
     photoPath: '/bouquets/sage-mist-serenity.jpg',
   },
   {
     id: 'blush-atelier',
-    name: 'Blush Atelier',
-    subtitle: 'Romantic Garden Reserve',
+    name: 'Blush Garden',
+    subtitle: 'Soft & Romantic',
     description:
-      'Abundant Dutch peonies, blush garden roses, and warm peach tulips swathed in champagne parchment with soft sage organza.',
+      'Full Dutch peonies, soft blush roses, and pastel tulips wrapped in warm cream paper with a soft sage ribbon.',
     wrapId: 'champagne-cream',
     ribbonId: 'soft-sage',
     stems: {
@@ -474,7 +474,7 @@ export const SIGNATURE_PRESETS: SignaturePreset[] = [
       eucalyptus: 3,
     },
     addons: [],
-    giftNote: 'For moments worth remembering long after they bloom.',
+    giftNote: 'For special moments worth celebrating.',
     palette: ['#EDE0C9', '#F2C6CE', '#E3AEB5', '#A7C0A8'],
     photoPath: '/bouquets/blush-atelier.jpg',
   },
@@ -499,34 +499,34 @@ export interface CameraPresetConfig {
 export const CAMERA_PRESETS: CameraPresetConfig[] = [
   {
     id: 'front',
-    label: 'Front Showcase',
+    label: 'Front View',
     position: [0, 0.85, 5.1],
     target: [0, 0.15, 0],
   },
   {
     id: 'editorial',
-    label: '3/4 Editorial',
+    label: 'Side View',
     position: [1.62, 1.32, 4.65],
     target: [0, 0.2, 0],
   },
   {
     id: 'top',
-    label: 'Top Bloom',
+    label: 'Top View',
     position: [0, 1.98, 4.35],
     target: [0, 0.32, 0],
   },
   {
     id: 'tag',
-    label: 'Gift Tag',
+    label: 'Gift Card',
     position: [0.85, -0.62, 2.45],
     target: [0.36, -0.82, 0.45],
   },
 ];
 
 export const DELIVERY_SLOTS = [
-  { id: 'morning', label: 'Morning Bloom', window: '9:00 AM – 12:00 PM' },
-  { id: 'afternoon', label: 'Atelier Midday', window: '1:00 PM – 5:00 PM' },
-  { id: 'evening', label: 'Evening Luxe', window: '6:00 PM – 9:00 PM' },
+  { id: 'morning', label: 'Morning', window: '9:00 AM – 12:00 PM' },
+  { id: 'afternoon', label: 'Afternoon', window: '1:00 PM – 5:00 PM' },
+  { id: 'evening', label: 'Evening', window: '6:00 PM – 9:00 PM' },
 ] as const;
 
 export function getTotalStems(stems: Record<BloomId, number>): number {

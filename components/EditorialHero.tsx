@@ -58,26 +58,26 @@ const STORY_PANELS: StoryPanelItem[] = [
   {
     id: 'choose',
     stepTitle: 'Choose',
-    caption: 'The blooms you love.',
+    caption: 'Pick your favorite flowers.',
     photoPath: '/story/choose.jpg',
     fallbackBloom: 'red-rose',
-    fallbackAlt: 'Velvet Red Rose bloom selected in the FLOWER rchii atelier',
+    fallbackAlt: 'Velvet Red Rose from FLOWER rchii',
   },
   {
     id: 'arrange',
     stepTitle: 'Arrange',
-    caption: 'Shaped by your hands.',
+    caption: 'See it come together in 3D.',
     photoPath: '/story/arrange.jpg',
     fallbackBloom: 'peony',
-    fallbackAlt: 'Lush Dutch Peony arranged inside a bespoke FLOWER rchii bouquet',
+    fallbackAlt: 'Dutch Peony arranged inside a FLOWER rchii bouquet',
   },
   {
     id: 'gift',
     stepTitle: 'Gift',
-    caption: 'Said without a word.',
+    caption: 'Add a personal card message.',
     photoPath: '/story/gift.jpg',
     fallbackBloom: 'lily',
-    fallbackAlt: 'Oriental White Lily gifted with a hand-inscribed FLOWER rchii tag',
+    fallbackAlt: 'Oriental White Lily gifted with a FLOWER rchii card',
   },
 ];
 
@@ -372,7 +372,7 @@ export function EditorialHero({
             className="text-[#4F6D52] tracking-wide mb-6"
             style={{ fontSize: 'clamp(0.9rem, 1.7vw, 1.15rem)' }}
           >
-            Every petal, chosen by you.
+            Pick every flower, wrap, and card message yourself.
           </p>
 
           {/* Static 3 Arch Story Panels */}
@@ -437,7 +437,7 @@ export function EditorialHero({
               onClick={onEnterAtelier}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] hover:bg-[#4F6D52] text-xs sm:text-sm font-semibold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
             >
-              <span>Begin Sculpting</span>
+              <span>Design Your Bouquet</span>
               <ArrowDown className="w-4 h-4 shrink-0" />
             </button>
             <button
@@ -445,7 +445,7 @@ export function EditorialHero({
               onClick={onExploreCollection}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#A7C0A8] bg-[#FAF7F2] text-[#17271C] hover:bg-[#EBF1EC] text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
             >
-              <span>Signature Collection</span>
+              <span>Popular Bouquets</span>
             </button>
           </div>
         </div>
@@ -469,7 +469,7 @@ export function EditorialHero({
             background:
               'radial-gradient(circle at 50% 44%, #FAF7F2 0%, #F2F0EA 48%, #EBF1EC 100%)',
           }}
-          className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 sm:px-8 py-4 sm:py-6"
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 sm:px-8 pt-12 pb-5 sm:py-6"
         >
           {/* CSS-only soft vignette & subtle analog film grain */}
           <div
@@ -536,11 +536,11 @@ export function EditorialHero({
               }}
               className="mt-1.5 text-[#4F6D52] tracking-wide will-change-transform"
             >
-              Every petal, chosen by you.
+              Pick every flower, wrap, and card message yourself.
             </motion.p>
 
             {/* Three Arch-Topped Story Panels (Desktop Row / Mobile Snapping Carousel) */}
-            <div className="w-full mt-4 sm:mt-6 flex md:grid md:grid-cols-3 gap-3.5 sm:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-1.5 px-1 atelier-scroll">
+            <div className="w-full mt-3.5 sm:mt-6 flex md:grid md:grid-cols-3 gap-3.5 sm:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-1.5 px-6 sm:px-1 no-scrollbar">
               {STORY_PANELS.map((panel, idx) => {
                 const hasPhoto = availableAssets.storyPhotos[panel.id];
                 const fallbackDataUrl = cutouts?.[panel.fallbackBloom]?.dataUrl;
@@ -552,7 +552,7 @@ export function EditorialHero({
                       opacity: panelMotion[idx].opacity,
                       y: panelMotion[idx].y,
                     }}
-                    className="snap-center shrink-0 w-[72vw] max-w-[248px] md:w-auto md:max-w-none rounded-t-[180px] rounded-b-[20px] border border-[#C8B288]/75 bg-[#FAF7F2] overflow-hidden shadow-[0_12px_30px_rgba(23,39,28,0.09)] will-change-transform"
+                    className="snap-center shrink-0 w-[68vw] max-w-[240px] md:w-auto md:max-w-none rounded-t-[180px] rounded-b-[20px] border border-[#C8B288]/75 bg-[#FAF7F2] overflow-hidden shadow-[0_12px_30px_rgba(23,39,28,0.09)] will-change-transform"
                   >
                     <div
                       className="relative h-28 sm:h-40 lg:h-44 flex items-center justify-center overflow-hidden"
@@ -568,7 +568,7 @@ export function EditorialHero({
                           fill
                           loading="lazy"
                           referrerPolicy="no-referrer"
-                          sizes="(max-width: 768px) 248px, 320px"
+                          sizes="(max-width: 768px) 240px, 320px"
                           className="object-cover"
                         />
                       ) : fallbackDataUrl ? (
@@ -587,7 +587,7 @@ export function EditorialHero({
                         <div className="w-20 h-20 rounded-full bg-[#EDE0C9]/55" />
                       )}
                     </div>
-                    <div className="px-4 py-3 text-center bg-[#FAF7F2]">
+                    <div className="px-4 py-2.5 sm:py-3 text-center bg-[#FAF7F2]">
                       <h2 className="font-serif text-lg sm:text-xl text-[#17271C] leading-tight">
                         {panel.stepTitle}
                       </h2>
@@ -600,25 +600,32 @@ export function EditorialHero({
               })}
             </div>
 
+            <motion.p
+              style={{ opacity: panel0Opacity }}
+              className="md:hidden text-[10px] tracking-[0.2em] uppercase text-[#4F6D52]/80 mt-1"
+            >
+              Swipe to explore →
+            </motion.p>
+
             {/* Primary & Secondary Atelier CTAs */}
             <motion.div
               style={{ opacity: ctaOpacity, y: ctaY }}
-              className="mt-4 sm:mt-6 flex flex-wrap items-center justify-center gap-3 will-change-transform"
+              className="mt-3.5 sm:mt-6 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 will-change-transform"
             >
               <button
                 type="button"
                 onClick={onEnterAtelier}
-                className="inline-flex items-center gap-2 px-6 py-2.5 sm:py-3 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] hover:bg-[#4F6D52] text-xs sm:text-sm font-semibold tracking-wide transition-colors shadow-[0_10px_24px_rgba(23,39,28,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] hover:bg-[#4F6D52] text-xs sm:text-sm font-semibold tracking-wide transition-colors shadow-[0_10px_24px_rgba(23,39,28,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
               >
-                <span>Begin Sculpting</span>
+                <span>Design Your Bouquet</span>
                 <ArrowDown className="w-4 h-4 shrink-0" />
               </button>
               <button
                 type="button"
                 onClick={onExploreCollection}
-                className="inline-flex items-center gap-2 px-6 py-2.5 sm:py-3 rounded-full border border-[#A7C0A8] bg-[#FAF7F2] text-[#17271C] hover:bg-[#EBF1EC] text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-[#A7C0A8] bg-[#FAF7F2] text-[#17271C] hover:bg-[#EBF1EC] text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
               >
-                <span>Signature Collection</span>
+                <span>Popular Bouquets</span>
               </button>
             </motion.div>
           </div>

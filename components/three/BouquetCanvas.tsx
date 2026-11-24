@@ -541,15 +541,23 @@ export const BouquetCanvas = forwardRef<BouquetCanvasHandle, BouquetCanvasProps>
         {/* Thin champagne-gold editorial arch frame inside the 3D stage */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-4 sm:inset-6 z-[4] rounded-t-[260px] rounded-b-[28px] border border-[#C8B288]/40"
+          className="pointer-events-none absolute inset-2.5 sm:inset-6 z-[4] rounded-t-[180px] sm:rounded-t-[260px] rounded-b-[22px] sm:rounded-b-[28px] border border-[#C8B288]/40"
         />
 
         {/* Quiet interaction caption */}
-        <div className="pointer-events-none absolute top-4 left-5 sm:top-7 sm:left-8 z-10 flex items-center gap-2 text-[11px] sm:text-xs font-medium tracking-wide text-[#4F6D52]">
-          <span>Interactive Botanical Studio</span>
+        <div className="pointer-events-none absolute top-3.5 left-4 sm:top-7 sm:left-8 z-10 flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-medium tracking-wide text-[#4F6D52]">
+          <span className="sm:hidden">3D Atelier</span>
+          <span className="hidden sm:inline">Interactive Botanical Studio</span>
           <span aria-hidden="true">·</span>
           <span className="text-[#17271C]/65">
-            {show2DFallback ? '2D Layered Studio View' : 'Drag to tilt · Scroll to zoom'}
+            {show2DFallback ? (
+              '2D Studio View'
+            ) : (
+              <>
+                <span className="sm:hidden">Drag to spin</span>
+                <span className="hidden sm:inline">Drag to tilt · Scroll to zoom</span>
+              </>
+            )}
           </span>
         </div>
 
@@ -659,12 +667,12 @@ export const BouquetCanvas = forwardRef<BouquetCanvasHandle, BouquetCanvasProps>
 
         {/* Compact bottom studio dock (no backdrop-filter over WebGL) */}
         <div
-          className={`absolute left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-full bg-[#FAF7F2]/95 border border-[#C8B288]/55 shadow-[0_8px_28px_rgba(23,39,28,0.12)] max-w-[94%] overflow-x-auto ${
-            compactControls ? 'bottom-3' : 'bottom-5 sm:bottom-7'
+          className={`absolute left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 sm:gap-2 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full bg-[#FAF7F2]/95 border border-[#C8B288]/55 shadow-[0_8px_28px_rgba(23,39,28,0.12)] max-w-[94%] overflow-x-auto no-scrollbar ${
+            compactControls ? 'bottom-6 lg:bottom-7' : 'bottom-5 sm:bottom-7'
           }`}
         >
           {!show2DFallback && (
-            <div className="flex items-center gap-1 pr-1.5 border-r border-[#A7C0A8]/50">
+            <div className="flex items-center gap-0.5 sm:gap-1 pr-1 sm:pr-1.5 border-r border-[#A7C0A8]/50">
               <Camera className="w-3.5 h-3.5 text-[#4F6D52] ml-1 shrink-0 hidden sm:block" />
               {CAMERA_PRESETS.map((preset) => {
                 const active = cameraPreset === preset.id;
@@ -673,7 +681,7 @@ export const BouquetCanvas = forwardRef<BouquetCanvasHandle, BouquetCanvasProps>
                     key={preset.id}
                     type="button"
                     onClick={() => handleSelectPreset(preset.id)}
-                    className={`px-2.5 py-1.5 rounded-full text-[11px] sm:text-xs font-medium whitespace-nowrap shrink-0 transition-colors ${
+                    className={`px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-medium whitespace-nowrap shrink-0 transition-colors ${
                       active
                         ? 'bg-[#17271C] text-[#EDE0C9]'
                         : 'text-[#17271C]/75 hover:bg-[#EBF1EC] hover:text-[#17271C]'
@@ -690,10 +698,11 @@ export const BouquetCanvas = forwardRef<BouquetCanvasHandle, BouquetCanvasProps>
             type="button"
             onClick={onShuffle}
             title="Shuffle flower arrangement across fixed dome slots"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] sm:text-xs font-medium text-[#17271C]/80 hover:bg-[#EBF1EC] hover:text-[#17271C] whitespace-nowrap shrink-0 transition-colors"
+            aria-label="Shuffle blooms"
+            className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-full text-[11px] sm:text-xs font-medium text-[#17271C]/80 hover:bg-[#EBF1EC] hover:text-[#17271C] whitespace-nowrap shrink-0 transition-colors"
           >
             <Shuffle className="w-3.5 h-3.5 shrink-0 text-[#4F6D52]" />
-            <span>Shuffle</span>
+            <span className="hidden sm:inline">Shuffle</span>
           </button>
 
           {!show2DFallback && (
@@ -702,7 +711,8 @@ export const BouquetCanvas = forwardRef<BouquetCanvasHandle, BouquetCanvasProps>
                 type="button"
                 onClick={onToggleAutoRotate}
                 title={autoRotate ? 'Pause studio sway' : 'Start gentle studio sway'}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] sm:text-xs font-medium whitespace-nowrap shrink-0 transition-colors ${
+                aria-label={autoRotate ? 'Pause studio sway' : 'Start gentle studio sway'}
+                className={`inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-full text-[11px] sm:text-xs font-medium whitespace-nowrap shrink-0 transition-colors ${
                   autoRotate
                     ? 'bg-[#4F6D52] text-[#FAF7F2]'
                     : 'text-[#17271C]/75 hover:bg-[#EBF1EC] hover:text-[#17271C]'
@@ -730,10 +740,13 @@ export const BouquetCanvas = forwardRef<BouquetCanvasHandle, BouquetCanvasProps>
                 type="button"
                 onClick={onDownloadCard}
                 disabled={isExportingCard}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EBF1EC] text-[#17271C] hover:bg-[#A7C0A8]/50 text-[11px] sm:text-xs font-medium whitespace-nowrap shrink-0 transition-colors disabled:opacity-60"
+                aria-label="Save bouquet preview card"
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-[#EBF1EC] text-[#17271C] hover:bg-[#A7C0A8]/50 text-[11px] sm:text-xs font-medium whitespace-nowrap shrink-0 transition-colors disabled:opacity-60"
               >
                 <Download className="w-3.5 h-3.5 shrink-0 text-[#4F6D52]" />
-                <span>{isExportingCard ? 'Saving…' : 'Save Card'}</span>
+                <span className="hidden sm:inline">
+                  {isExportingCard ? 'Saving…' : 'Save Card'}
+                </span>
               </button>
             </>
           )}

@@ -315,10 +315,10 @@ export function AiFloristDrawer({
                 <div>
                   <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-[#C8B288] font-medium">
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>Gemini Floral Concierge</span>
+                    <span>Smart Floral Stylist</span>
                   </div>
                   <h2 className="font-serif text-2xl text-[#FAF7F2] mt-0.5 leading-tight">
-                    AI Stylist &amp; Photo Studio
+                    AI Stylist &amp; Photo Helper
                   </h2>
                 </div>
                 <button
@@ -472,8 +472,8 @@ export function AiFloristDrawer({
                               Reference photo attached
                             </p>
                             <p className="text-[11px] text-[#4F6D52] mt-0.5 leading-snug">
-                              Gemini will match its color palette, stems, and
-                              wrap inside the 3D Atelier.
+                              AI will match its colors, flowers, and wrap in
+                              your 3D bouquet.
                             </p>
                           </div>
                         </div>
@@ -524,12 +524,12 @@ export function AiFloristDrawer({
                       {stylistLoading ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Curating Your Bespoke Bouquet…</span>
+                          <span>Creating Your Bouquet Idea…</span>
                         </>
                       ) : (
                         <>
                           <Sparkles className="w-4 h-4 text-[#C8B288]" />
-                          <span>Suggest Bouquet with Gemini AI</span>
+                          <span>Suggest a Bouquet</span>
                         </>
                       )}
                     </button>
@@ -545,7 +545,7 @@ export function AiFloristDrawer({
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <p className="text-[11px] uppercase tracking-[0.18em] text-[#4F6D52] font-semibold">
-                            Curated Recommendation
+                            Suggested Bouquet
                           </p>
                           <h3 className="font-serif text-xl text-[#17271C] leading-snug">
                             {stylistResult.bouquetTitle}
@@ -650,7 +650,7 @@ export function AiFloristDrawer({
                           className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288]/70 hover:bg-[#4F6D52] text-xs font-semibold transition-colors"
                         >
                           <Check className="w-3.5 h-3.5" />
-                          <span>Apply to Live 3D Bouquet</span>
+                          <span>Apply to My Bouquet</span>
                         </button>
                         <button
                           type="button"
@@ -773,7 +773,7 @@ export function AiFloristDrawer({
                       <div className="flex items-center justify-between gap-3">
                         <div className="min-w-0">
                           <p className="text-[11px] uppercase tracking-[0.18em] text-[#4F6D52] font-semibold">
-                            Master Florist Review
+                            Bouquet Photo Review
                           </p>
                           <h3 className="font-serif text-xl text-[#17271C] leading-snug">
                             {photoResult.visualVerdict}

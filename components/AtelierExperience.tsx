@@ -1,7 +1,13 @@
 'use client';
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import dynamic from 'next/dynamic';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Check, Flower2, Gift, MessageCircle, Sparkles } from 'lucide-react';
 import {
@@ -25,34 +31,26 @@ import {
   type WrapId,
 } from '@/lib/bouquet-data';
 import { downloadBouquetPreviewCard } from '@/lib/preview-card';
-import type { BouquetCanvasHandle } from './three/BouquetCanvas';
+import {
+  BouquetCanvas,
+  type BouquetCanvasHandle,
+} from './three/BouquetCanvas';
 import { Navbar } from './Navbar';
 import { EditorialHero } from './EditorialHero';
-import { CustomizerPanel, type CustomizerStep } from './CustomizerPanel';
+import {
+  CustomizerPanel,
+  type CustomizerStep,
+  type DragBouquetItem,
+  type QuickRefineAction,
+} from './CustomizerPanel';
 import { SignatureCollection } from './SignatureCollection';
 import { BespokeConcierge } from './BespokeConcierge';
 import { CartDrawer } from './CartDrawer';
 import { AiFloristDrawer, type AiDrawerTab } from './AiFloristDrawer';
 
-const BouquetCanvas = dynamic(
-  () => import('./three/BouquetCanvas').then((mod) => mod.BouquetCanvas),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-full h-full atelier-radial-stage flex flex-col items-center justify-center px-6 text-center">
-        <div className="w-16 h-20 rounded-full border border-[#C8B288]/70 flex items-center justify-center mb-4">
-          <Flower2 className="w-6 h-6 text-[#4F6D52]" />
-        </div>
-        <p className="font-serif text-xl text-[#17271C]">
-          Preparing 3D Floral Atelier…
-        </p>
-        <p className="text-xs text-[#4F6D52] mt-1">
-          Arranging botanical stems and studio lighting
-        </p>
-      </div>
-    ),
-  }
-);
+const emptySubscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 interface AtelierExperienceProps {
   availableAssets?: AvailableOptionalAssets;
@@ -61,13 +59,17 @@ interface AtelierExperienceProps {
 export function AtelierExperience({
   availableAssets = DEFAULT_AVAILABLE_ASSETS,
 }: AtelierExperienceProps) {
+  const isClient = useSyncExternalStore(
+    emptySubscribe,
+    getClientSnapshot,
+    getServerSnapshot
+  );
   const [config, setConfig] = useState<BouquetConfig>(DEFAULT_BOUQUET);
   const [activeStep, setActiveStep] = useState<CustomizerStep>(2);
   const [cameraPreset, setCameraPreset] = useState<CameraPresetId>('front');
   const [autoRotate, setAutoRotate] = useState<boolean>(false);
   const [shuffleSeed, setShuffleSeed] = useState<number>(0);
   const [isExportingCard, setIsExportingCard] = useState<boolean>(false);
-  const [mobileSheetExpanded, setMobileSheetExpanded] = useState<boolean>(false);
 
   const [cartItems, setCartItems] = useState<CartBouquetItem[]>([]);
   const [cartOpen, setCartOpen] = useState<boolean>(false);
@@ -76,7 +78,23 @@ export function AtelierExperience({
   const [aiSnapshot, setAiSnapshot] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Quick-Refine Smart Floral Stylist state
+  const [quickRefineLoading, setQuickRefineLoading] =
+    useState<QuickRefineAction | null>(null);
+  const [quickRefineNote, setQuickRefineNote] = useState<string | null>(null);
+
+  // Native HTML5 + Pointer Drag-and-Drop state
+  const [activeDragItem, setActiveDragItem] = useState<DragBouquetItem | null>(
+    null
+  );
+  const [isDragOverStage, setIsDragOverStage] = useState<boolean>(false);
+  const [pointerDragPos, setPointerDragPos] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
   const canvasRef = useRef<BouquetCanvasHandle>(null);
+  const stageDropRef = useRef<HTMLDivElement>(null);
   const toastTimerRef = useRef<number | null>(null);
 
   const notify = useCallback((message: string) => {
@@ -96,15 +114,15 @@ export function AtelierExperience({
     }
   };
 
-  const handleChangeWrap = (wrapId: WrapId) => {
+  const handleChangeWrap = useCallback((wrapId: WrapId) => {
     setConfig((prev) => ({ ...prev, wrapId, presetName: undefined }));
-  };
+  }, []);
 
-  const handleChangeRibbon = (ribbonId: RibbonId) => {
+  const handleChangeRibbon = useCallback((ribbonId: RibbonId) => {
     setConfig((prev) => ({ ...prev, ribbonId, presetName: undefined }));
-  };
+  }, []);
 
-  const handleAdjustStem = (bloomId: BloomId, delta: number) => {
+  const handleAdjustStem = useCallback((bloomId: BloomId, delta: number) => {
     setConfig((prev) => {
       const current = prev.stems[bloomId] || 0;
       const total = getTotalStems(prev.stems);
@@ -120,6 +138,109 @@ export function AtelierExperience({
         },
       };
     });
+  }, []);
+
+  const applyDroppedItem = useCallback(
+    (item: DragBouquetItem) => {
+      if (item.kind === 'bloom') {
+        handleAdjustStem(item.id as BloomId, 1);
+        notify(`Added 1 ${item.label} to your bouquet`);
+      } else if (item.kind === 'wrap') {
+        handleChangeWrap(item.id as WrapId);
+        notify(`Applied ${item.label}`);
+      } else if (item.kind === 'ribbon') {
+        handleChangeRibbon(item.id as RibbonId);
+        notify(`Applied ${item.label}`);
+      }
+    },
+    [handleAdjustStem, handleChangeWrap, handleChangeRibbon, notify]
+  );
+
+  const isPointerDragging = pointerDragPos !== null;
+
+  // Lightweight pointer/touch drag listeners (active only while pointer-dragging from handle)
+  useEffect(() => {
+    if (!isPointerDragging || !activeDragItem) return;
+
+    const isPointInsideStage = (clientX: number, clientY: number): boolean => {
+      const rect = stageDropRef.current?.getBoundingClientRect();
+      if (!rect) return false;
+      return (
+        clientX >= rect.left &&
+        clientX <= rect.right &&
+        clientY >= rect.top &&
+        clientY <= rect.bottom
+      );
+    };
+
+    const handleMove = (e: PointerEvent) => {
+      setPointerDragPos({ x: e.clientX, y: e.clientY });
+      setIsDragOverStage(isPointInsideStage(e.clientX, e.clientY));
+    };
+
+    const handleUp = (e: PointerEvent) => {
+      if (isPointInsideStage(e.clientX, e.clientY)) {
+        applyDroppedItem(activeDragItem);
+      }
+      setPointerDragPos(null);
+      setActiveDragItem(null);
+      setIsDragOverStage(false);
+    };
+
+    window.addEventListener('pointermove', handleMove);
+    window.addEventListener('pointerup', handleUp);
+    window.addEventListener('pointercancel', handleUp);
+    return () => {
+      window.removeEventListener('pointermove', handleMove);
+      window.removeEventListener('pointerup', handleUp);
+      window.removeEventListener('pointercancel', handleUp);
+    };
+  }, [isPointerDragging, activeDragItem, applyDroppedItem]);
+
+  const handlePointerDragStart = useCallback(
+    (item: DragBouquetItem, event: React.PointerEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      setActiveDragItem(item);
+      setPointerDragPos({ x: event.clientX, y: event.clientY });
+    },
+    []
+  );
+
+  const handleStageDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    if (!isDragOverStage) setIsDragOverStage(true);
+  };
+
+  const handleStageDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    if (
+      e.currentTarget &&
+      e.relatedTarget instanceof Node &&
+      e.currentTarget.contains(e.relatedTarget)
+    ) {
+      return;
+    }
+    setIsDragOverStage(false);
+  };
+
+  const handleStageDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOverStage(false);
+
+    let dropped: DragBouquetItem | null = activeDragItem;
+    const raw = e.dataTransfer.getData('application/x-flower-rchii');
+    if (raw) {
+      try {
+        dropped = JSON.parse(raw) as DragBouquetItem;
+      } catch {
+        // Fallback to activeDragItem state
+      }
+    }
+
+    if (dropped) {
+      applyDroppedItem(dropped);
+    }
+    setActiveDragItem(null);
   };
 
   const handleResetStems = () => {
@@ -154,11 +275,14 @@ export function AtelierExperience({
     setCameraPreset('tag');
   };
 
-  const addBouquetConfigToBag = (bouquetConfig: BouquetConfig, customTitle?: string) => {
+  const addBouquetConfigToBag = (
+    bouquetConfig: BouquetConfig,
+    customTitle?: string
+  ) => {
     const pricing = getBouquetPricing(bouquetConfig);
     if (pricing.totalStems <= 0) return;
 
-    const title = customTitle || bouquetConfig.presetName || 'Bespoke Atelier Bouquet';
+    const title = customTitle || bouquetConfig.presetName || 'Custom Bouquet';
     const newItem: CartBouquetItem = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       title,
@@ -189,12 +313,12 @@ export function AtelierExperience({
     setShuffleSeed(0);
     setCameraPreset('front');
     scrollToSection('atelier');
-    notify(`Loaded "${preset.name}" into 3D Atelier`);
+    notify(`Loaded "${preset.name}" into your 3D bouquet`);
   };
 
   const handleShuffleSlots = () => {
     setShuffleSeed((s) => s + 1);
-    notify('Shuffled blooms across dome slots');
+    notify('Rearranged flowers for a fresh look');
   };
 
   const handleQuickAddPreset = (preset: SignaturePreset) => {
@@ -217,11 +341,11 @@ export function AtelierExperience({
     try {
       const snapshot = canvasRef.current.captureSnapshot();
       if (!snapshot) {
-        notify('Please wait a moment for the 3D bouquet to finish rendering');
+        notify('Please wait a moment for the 3D bouquet to finish loading');
         return;
       }
       await downloadBouquetPreviewCard(snapshot, config);
-      notify('Bouquet studio preview card downloaded');
+      notify('Bouquet preview card saved');
     } finally {
       setIsExportingCard(false);
     }
@@ -235,17 +359,14 @@ export function AtelierExperience({
     return snap;
   }, []);
 
-  const handleOpenAiStylist = useCallback(
-    (tab: AiDrawerTab) => {
-      setAiDrawerTab(tab);
-      const snap = canvasRef.current?.captureSnapshot() ?? null;
-      if (snap) {
-        setAiSnapshot(snap);
-      }
-      setAiDrawerOpen(true);
-    },
-    []
-  );
+  const handleOpenAiStylist = useCallback((tab: AiDrawerTab) => {
+    setAiDrawerTab(tab);
+    const snap = canvasRef.current?.captureSnapshot() ?? null;
+    if (snap) {
+      setAiSnapshot(snap);
+    }
+    setAiDrawerOpen(true);
+  }, []);
 
   const handleApplyAiConfig = useCallback(
     (nextConfig: BouquetConfig, label: string) => {
@@ -259,9 +380,50 @@ export function AtelierExperience({
       });
       setShuffleSeed(0);
       setCameraPreset('front');
-      notify(`Applied "${label}" to live 3D bouquet`);
+      notify(`Applied "${label}" to your bouquet`);
     },
     [notify]
+  );
+
+  // One-tap Smart Floral Stylist Quick-Refine buttons inside CustomizerPanel
+  const handleQuickRefine = useCallback(
+    async (action: QuickRefineAction) => {
+      setQuickRefineLoading(action);
+      try {
+        const res = await fetch('/api/gemini/stylist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            refineAction: action,
+            budgetInr: action === 'under-1500' ? 1500 : null,
+            previousSuggestion: config,
+            currentConfig: config,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Could not update your bouquet.');
+        }
+        if (data.config) {
+          handleApplyAiConfig(
+            data.config as BouquetConfig,
+            data.bouquetTitle || 'Smart Stylist Bouquet'
+          );
+          if (data.stylistNote) {
+            setQuickRefineNote(String(data.stylistNote));
+          }
+        }
+      } catch (err: unknown) {
+        notify(
+          err instanceof Error
+            ? err.message
+            : 'Unable to reach Smart Stylist right now'
+        );
+      } finally {
+        setQuickRefineLoading(null);
+      }
+    },
+    [config, handleApplyAiConfig, notify]
   );
 
   const handleUpdateCartQuantity = (id: string, delta: number) => {
@@ -280,7 +442,10 @@ export function AtelierExperience({
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalCartCount = cartItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
 
   const floatingWhatsAppText = useMemo(
     () => buildSingleBouquetWhatsAppMessage(config),
@@ -295,17 +460,17 @@ export function AtelierExperience({
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(floatingWhatsAppText).catch(() => {});
     }
-    notify('Custom bouquet summary copied & opening WhatsApp');
+    notify('Bouquet details copied & opening WhatsApp');
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#17271C]">
+    <div className="min-h-screen w-full max-w-[100vw] flex flex-col bg-[#FAF7F2] text-[#17271C] overflow-x-clip">
       <Navbar
         cartCount={totalCartCount}
         onOpenCart={() => setCartOpen(true)}
       />
 
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-[100vw]">
         {/* Section 1: Editorial Brand Hero ("The Bloom Iris") */}
         <EditorialHero
           availableAssets={availableAssets}
@@ -313,41 +478,84 @@ export function AtelierExperience({
           onExploreCollection={() => scrollToSection('collection')}
         />
 
-        {/* Section 2: Interactive 3D Custom Bouquet Builder ("The Atelier") */}
+        {/* Section 2: Interactive 3D Custom Bouquet Builder */}
         <section
           id="atelier"
-          aria-label="Interactive 3D Bouquet Atelier"
-          className="relative w-full border-b border-[#A7C0A8]/35 bg-[#FAF7F2]"
+          aria-label="Design Your Custom 3D Bouquet"
+          className="relative w-full max-w-[100vw] border-b border-[#A7C0A8]/35 bg-[#FAF7F2]"
         >
           {/*
-            Desktop: 60% Interactive 3D Stage (left) + 40% 3-Step Customizer (right)
-            Mobile: Top 45% live 3D bouquet visible while customizer acts as expandable bottom sheet
+            Mobile (< 768px): Full-width vertical stacked layout — sticky compact 3D stage (h-[44vh] w-full) on top,
+            full-width vertically scrolling customizer directly below.
+            Desktop (>= 768px): Side-by-side 3D stage (left) + customizer (right) with ONE single <BouquetCanvas />.
           */}
-          <div className="flex flex-col lg:flex-row w-full h-[calc(100dvh-4rem)] min-h-[680px] lg:h-[calc(100vh-4rem)] lg:min-h-[700px] lg:max-h-[940px] overflow-hidden">
-            {/* 3D Interactive Stage */}
+          <div className="flex flex-col md:flex-row w-full max-w-full md:h-[calc(100vh-4rem)] md:min-h-[680px] md:max-h-[940px] md:overflow-hidden">
+            {/* Single-Instance 3D Stage + Drag-and-Drop Zone */}
             <div
-              className={`relative w-full lg:w-[60%] lg:h-full transition-[height] duration-300 ease-out shrink-0 ${
-                mobileSheetExpanded ? 'h-[32dvh]' : 'h-[45dvh]'
-              }`}
+              ref={stageDropRef}
+              onDragOver={handleStageDragOver}
+              onDragLeave={handleStageDragLeave}
+              onDrop={handleStageDrop}
+              className="sticky top-16 z-20 h-[44vh] min-h-[290px] w-full shrink-0 border-b border-[#A7C0A8]/45 bg-[#FAF7F2] md:static md:top-auto md:z-auto md:w-[58%] lg:w-[60%] md:h-full md:border-b-0"
             >
-              <BouquetCanvas
-                ref={canvasRef}
-                config={config}
-                cameraPreset={cameraPreset}
-                onCameraPresetChange={setCameraPreset}
-                autoRotate={autoRotate}
-                onToggleAutoRotate={() => setAutoRotate((v) => !v)}
-                shuffleSeed={shuffleSeed}
-                onShuffle={handleShuffleSlots}
-                onDownloadCard={handleDownloadPreviewCard}
-                availableAssets={availableAssets}
-                isExportingCard={isExportingCard}
-                compactControls={mobileSheetExpanded}
-              />
+              {isClient ? (
+                <BouquetCanvas
+                  ref={canvasRef}
+                  config={config}
+                  cameraPreset={cameraPreset}
+                  onCameraPresetChange={setCameraPreset}
+                  autoRotate={autoRotate}
+                  onToggleAutoRotate={() => setAutoRotate((v) => !v)}
+                  shuffleSeed={shuffleSeed}
+                  onShuffle={handleShuffleSlots}
+                  onDownloadCard={handleDownloadPreviewCard}
+                  availableAssets={availableAssets}
+                  isExportingCard={isExportingCard}
+                  compactControls={false}
+                />
+              ) : (
+                <div className="w-full h-full atelier-radial-stage flex flex-col items-center justify-center px-6 text-center">
+                  <div className="w-16 h-20 rounded-full border border-[#C8B288]/70 flex items-center justify-center mb-4">
+                    <Flower2 className="w-6 h-6 text-[#4F6D52]" />
+                  </div>
+                  <p className="font-serif text-xl text-[#17271C]">
+                    Loading Your 3D Bouquet…
+                  </p>
+                  <p className="text-xs text-[#4F6D52] mt-1">
+                    Setting up flowers, wrapping paper, and studio light
+                  </p>
+                </div>
+              )}
+
+              {/* Champagne Gold (#C8B288) Dashed Drop Glow Ring & Floating Hint */}
+              <AnimatePresence>
+                {activeDragItem && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.16 }}
+                    className={`pointer-events-none absolute inset-2.5 sm:inset-4 z-30 rounded-3xl border-2 border-dashed border-[#C8B288] flex items-start justify-center pt-4 transition-colors ${
+                      isDragOverStage
+                        ? 'bg-[#EDE0C9]/28 shadow-[inset_0_0_44px_rgba(200,178,136,0.45),0_0_24px_rgba(200,178,136,0.35)]'
+                        : 'bg-[#EDE0C9]/10 shadow-[inset_0_0_24px_rgba(200,178,136,0.28)]'
+                    }`}
+                  >
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#17271C]/92 text-[#EDE0C9] border border-[#C8B288] shadow-lg text-xs font-medium tracking-wide">
+                      <Sparkles className="w-3.5 h-3.5 text-[#C8B288] shrink-0" />
+                      <span>
+                        {isDragOverStage
+                          ? `Release to add ${activeDragItem.label}`
+                          : 'Drop here to add to your bouquet'}
+                      </span>
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Desktop Right Panel (40%) */}
-            <div className="hidden lg:block lg:w-[40%] lg:h-full min-h-0">
+            {/* Single-Instance Full-Width Customizer Panel */}
+            <div className="w-full md:w-[42%] lg:w-[40%] md:h-full min-h-0">
               <CustomizerPanel
                 config={config}
                 activeStep={activeStep}
@@ -361,87 +569,72 @@ export function AtelierExperience({
                 onFocusGiftTag={handleFocusGiftTag}
                 onAddToBag={() => addBouquetConfigToBag(config)}
                 onOpenAiStylist={handleOpenAiStylist}
-              />
-            </div>
-
-            {/* Mobile Expandable Glassmorphic Bottom Sheet */}
-            <div
-              className={`lg:hidden relative z-20 -mt-5 flex-1 min-h-0 transition-all duration-300`}
-            >
-              <CustomizerPanel
-                config={config}
-                activeStep={activeStep}
-                onStepChange={setActiveStep}
-                onChangeWrap={handleChangeWrap}
-                onChangeRibbon={handleChangeRibbon}
-                onAdjustStem={handleAdjustStem}
-                onResetStems={handleResetStems}
-                onChangeGiftNote={handleChangeGiftNote}
-                onToggleAddon={handleToggleAddon}
-                onFocusGiftTag={handleFocusGiftTag}
-                onAddToBag={() => addBouquetConfigToBag(config)}
-                onOpenAiStylist={handleOpenAiStylist}
-                isMobileSheet
-                mobileExpanded={mobileSheetExpanded}
-                onToggleMobileExpand={() =>
-                  setMobileSheetExpanded((prev) => !prev)
-                }
+                onQuickRefine={handleQuickRefine}
+                quickRefineLoading={quickRefineLoading}
+                quickRefineNote={quickRefineNote}
+                onDragItemStart={setActiveDragItem}
+                onDragItemEnd={() => {
+                  setActiveDragItem(null);
+                  setIsDragOverStage(false);
+                }}
+                onPointerDragStart={handlePointerDragStart}
               />
             </div>
           </div>
         </section>
 
-        {/* Section 3: Signature Pre-Made Collection */}
-        <SignatureCollection
-          activePresetName={config.presetName}
-          availableBouquetPhotos={availableAssets.bouquets}
-          onSelectPreset={handleSelectPreset}
-          onQuickAddPreset={handleQuickAddPreset}
-        />
+        {/* Section 3: Ready-Made Bouquets */}
+        <div className="w-full max-w-[100vw] overflow-x-hidden">
+          <SignatureCollection
+            activePresetName={config.presetName}
+            availableBouquetPhotos={availableAssets.bouquets}
+            onSelectPreset={handleSelectPreset}
+            onQuickAddPreset={handleQuickAddPreset}
+          />
+        </div>
 
-        {/* Section 4: Bespoke Floral Concierge */}
-        <BespokeConcierge onNotify={notify} />
+        {/* Section 4: Custom Order Request */}
+        <div className="w-full max-w-[100vw] overflow-x-hidden">
+          <BespokeConcierge onNotify={notify} />
+        </div>
 
-        {/* Section 5: Quiet Editorial Craftsmanship Pillar */}
+        {/* Section 5: Simple Brand Promise Footer */}
         <section
           id="craft"
-          className="py-16 sm:py-20 px-5 sm:px-8 bg-[#17271C] text-[#EDE0C9]"
+          className="w-full max-w-[100vw] overflow-x-hidden py-16 sm:py-20 px-5 sm:px-8 bg-[#17271C] text-[#EDE0C9]"
         >
           <div className="max-w-[1440px] mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 pb-12 border-b border-[#C8B288]/20">
               <div className="space-y-2.5">
                 <Flower2 className="w-5 h-5 text-[#C8B288]" />
                 <h3 className="font-serif text-2xl text-[#FAF7F2]">
-                  Golden-Angle Stem Architecture
+                  Hand-Arranged Fresh Flowers
                 </h3>
                 <p className="text-xs sm:text-sm text-[#EDE0C9]/75 leading-relaxed">
-                  Every bouquet is hand-spiraled along natural phyllotaxis
-                  angles so focal peonies, garden roses, and lilies breathe with
-                  sculptural balance.
+                  Every bouquet is arranged by hand so roses, peonies, and
+                  lilies look full, balanced, and fresh from every angle.
                 </p>
               </div>
 
               <div className="space-y-2.5">
                 <Sparkles className="w-5 h-5 text-[#C8B288]" />
                 <h3 className="font-serif text-2xl text-[#FAF7F2]">
-                  Signature Botanical Wrapping
+                  Soft Matte Paper &amp; Ribbons
                 </h3>
                 <p className="text-xs sm:text-sm text-[#EDE0C9]/75 leading-relaxed">
-                  Folded in heavyweight matte cotton-rag sheets with satin silk
-                  and sheer organza ribbons matched to the FLOWER rchii house
-                  palette.
+                  Wrapped in thick matte paper and finished with soft satin or
+                  sheer ribbons in our signature FLOWER rchii colors.
                 </p>
               </div>
 
               <div className="space-y-2.5">
                 <Gift className="w-5 h-5 text-[#C8B288]" />
                 <h3 className="font-serif text-2xl text-[#FAF7F2]">
-                  Gold-Bordered Cardstock Tag
+                  Personal Printed Gift Card
                 </h3>
                 <p className="text-xs sm:text-sm text-[#EDE0C9]/75 leading-relaxed">
-                  Each arrangement finishes with your custom note printed on an
-                  oval champagne-foil tag and delivered chilled in our atelier
-                  carriers.
+                  Your message is printed neatly on a cream-and-gold gift card
+                  tied to the bouquet and delivered fresh across Indore.
                 </p>
               </div>
             </div>
@@ -458,13 +651,13 @@ export function AtelierExperience({
                   WHERE FLOWER IS BLOOM
                 </span>
               </div>
-              <p>© {new Date().getFullYear()} FLOWER rchii Floral Atelier</p>
+              <p>© {new Date().getFullYear()} FLOWER rchii Flower Studio</p>
             </div>
           </div>
         </section>
       </main>
 
-      {/* Slide-Out Cart & Checkout Drawer */}
+      {/* Slide-Out Bag & Checkout Drawer */}
       <CartDrawer
         open={cartOpen}
         items={cartItems}
@@ -475,7 +668,7 @@ export function AtelierExperience({
         onNotify={notify}
       />
 
-      {/* Gemini AI Floral Stylist & Bouquet Photo Studio Drawer */}
+      {/* Smart Floral Stylist & Photo Help Drawer */}
       <AiFloristDrawer
         open={aiDrawerOpen}
         activeTab={aiDrawerTab}
@@ -490,14 +683,28 @@ export function AtelierExperience({
         onNotify={notify}
       />
 
-      {/* Permanent Floating Quick-Action Dock: AI Florist + WhatsApp Order (clear of Navbar Bag & mobile customizer bar) */}
+      {/* Floating Touch/Pointer Drag Ghost Preview */}
+      {pointerDragPos && activeDragItem && (
+        <div
+          aria-hidden="true"
+          style={{
+            transform: `translate3d(${pointerDragPos.x - 56}px, ${pointerDragPos.y - 24}px, 0)`,
+          }}
+          className="pointer-events-none fixed top-0 left-0 z-50 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] shadow-xl text-xs font-medium whitespace-nowrap"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-[#C8B288] shrink-0" />
+          <span>{activeDragItem.label}</span>
+        </div>
+      )}
+
+      {/* Permanent Floating Quick-Action Dock: AI Florist + Order on WhatsApp */}
       {!cartOpen && !aiDrawerOpen && (
-        <div className="fixed right-4 bottom-24 lg:bottom-6 lg:right-6 z-30 flex flex-col items-end gap-2.5">
+        <div className="fixed right-3.5 bottom-24 md:bottom-6 md:right-6 z-30 flex flex-col items-end gap-2">
           <button
             type="button"
             onClick={() => handleOpenAiStylist('stylist')}
-            aria-label="Open Gemini AI Floral Stylist and Bouquet Photo Studio"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] hover:bg-[#4F6D52] shadow-[0_10px_28px_rgba(23,39,28,0.28)] text-xs font-semibold tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B288]"
+            aria-label="Open Smart Floral Stylist"
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] hover:bg-[#4F6D52] shadow-[0_10px_28px_rgba(23,39,28,0.28)] text-xs font-semibold tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B288]"
           >
             <Sparkles className="w-4 h-4 text-[#C8B288] shrink-0" />
             <span>AI Florist</span>
@@ -508,16 +715,16 @@ export function AtelierExperience({
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleFloatingWhatsAppClick}
-            aria-label="Order your custom bouquet on WhatsApp"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#EDE0C9] text-[#17271C] border border-[#C8B288] hover:bg-[#FAF7F2] shadow-[0_10px_28px_rgba(23,39,28,0.22)] text-xs font-semibold tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
+            aria-label="Order your bouquet on WhatsApp"
+            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-[#EDE0C9] text-[#17271C] border border-[#C8B288] hover:bg-[#FAF7F2] shadow-[0_10px_28px_rgba(23,39,28,0.22)] text-xs font-semibold tracking-wide transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
           >
             <MessageCircle className="w-4 h-4 text-[#17271C] shrink-0" />
-            <span className="hidden sm:inline">WhatsApp Order</span>
+            <span className="hidden sm:inline">Order on WhatsApp</span>
           </a>
         </div>
       )}
 
-      {/* Crisp Floating Confirmation Toast */}
+      {/* Floating Confirmation Toast */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
@@ -527,10 +734,10 @@ export function AtelierExperience({
             transition={{ duration: 0.2 }}
             role="status"
             aria-live="polite"
-            className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288]/50 shadow-xl text-xs font-medium whitespace-nowrap"
+            className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288]/50 shadow-xl text-xs font-medium whitespace-nowrap max-w-[92vw] truncate"
           >
             <Check className="w-3.5 h-3.5 text-[#A7C0A8] shrink-0" />
-            <span>{toastMessage}</span>
+            <span className="truncate">{toastMessage}</span>
           </motion.div>
         )}
       </AnimatePresence>

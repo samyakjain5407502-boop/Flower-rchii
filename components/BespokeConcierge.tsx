@@ -43,20 +43,20 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
 
   const inquiryText = useMemo(() => {
     const lines = [
-      '*FLOWER rchii — Bespoke Floral Concierge Inquiry*',
+      '*FLOWER rchii — Custom Bouquet Request*',
       '_WHERE FLOWER IS BLOOM_',
       '',
       `*Occasion:* ${selectedOccasion}`,
-      `*Preferred Palette / Blooms:* ${
-        paletteInput.trim() || 'Open to master florist curation'
+      `*Favorite Colors / Flowers:* ${
+        paletteInput.trim() || 'Open to florist suggestions'
       }`,
-      `*Customization Notes:* ${
-        customNotes.trim() || 'Signature luxury styling & gift tag'
+      `*Extra Details:* ${
+        customNotes.trim() || 'Standard wrap & personal gift card'
       }`,
-      `*Preferred Delivery Date:* ${deliveryDate || 'Flexible'}`,
+      `*Delivery Date:* ${deliveryDate || 'Flexible'}`,
       `*Delivery Area:* ${deliveryArea.trim() || 'Indore (to be confirmed)'}`,
       '',
-      'Please share bespoke options & pricing.',
+      'Please share options and pricing.',
     ];
     return lines.join('\n');
   }, [selectedOccasion, paletteInput, customNotes, deliveryDate, deliveryArea]);
@@ -70,14 +70,14 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(inquiryText).catch(() => {});
     }
-    onNotify('Bespoke inquiry prepared for WhatsApp — our florists await');
+    onNotify('Custom request copied & opening WhatsApp');
   };
 
   const handleCopyInquiry = async () => {
     try {
       await navigator.clipboard.writeText(inquiryText);
       setCopied(true);
-      onNotify('Custom concierge inquiry copied to clipboard');
+      onNotify('Custom request copied to clipboard');
       window.setTimeout(() => setCopied(false), 2400);
     } catch {
       onNotify('Ready to send on WhatsApp');
@@ -87,11 +87,11 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
   return (
     <section
       id="concierge"
-      aria-label="Bespoke Floral Concierge"
+      aria-label="Custom Bouquet Requests"
       className="py-16 sm:py-24 px-5 sm:px-8 bg-[#EBF1EC] border-t border-[#A7C0A8]/45"
     >
       <div className="max-w-[1120px] mx-auto">
-        {/* Editorial Header with Thin Champagne-Gold Oval Arch Accent */}
+        {/* Header with Champagne Oval Accent */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -106,16 +106,17 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
           </div>
 
           <p className="text-xs tracking-[0.26em] text-[#4F6D52] font-medium mb-2.5">
-            BESPOKE FLORAL CONCIERGE
+            CUSTOM ORDERS
           </p>
 
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] leading-[1.08] text-[#17271C] text-balance max-w-2xl mb-4">
-            Have Something Extraordinary in Mind?
+            Need Something Custom?
           </h2>
 
           <p className="text-sm sm:text-base text-[#4F6D52] max-w-2xl leading-relaxed">
-            From 100-stem proposals and rare imported blooms to custom-budget
-            surprises—tell our master florists your vision.
+            Want 100 red roses, special flowers, or a surprise bouquet made for
+            your budget? Tell us what you need and our florists will make it for
+            you.
           </p>
         </motion.div>
 
@@ -137,7 +138,7 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
             {/* Occasion Quick-Pills */}
             <div>
               <p className="text-xs font-semibold tracking-wide text-[#17271C] mb-3">
-                Select Occasion
+                What&apos;s the Occasion?
               </p>
               <div className="flex flex-wrap gap-2">
                 {OCCASION_OPTIONS.map((occasion) => {
@@ -160,38 +161,38 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
               </div>
             </div>
 
-            {/* Preferred Color Palette / Flowers Input */}
+            {/* Preferred Color / Flowers Input */}
             <div>
               <label
                 htmlFor="concierge-palette"
                 className="block text-xs font-semibold tracking-wide text-[#17271C] mb-2"
               >
-                Preferred Color Palette / Flowers
+                Favorite Colors or Flowers
               </label>
               <input
                 id="concierge-palette"
                 type="text"
                 value={paletteInput}
                 onChange={(e) => setPaletteInput(e.target.value)}
-                placeholder="Pastel peach & white orchids, or ₹3,500 surprise arrangement"
+                placeholder="e.g. Soft pink roses & white lilies, or a ₹3,000 surprise bouquet"
                 className="w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] placeholder:text-[#4F6D52]/55 focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52] transition-shadow"
               />
             </div>
 
-            {/* Special Customization Notes */}
+            {/* Extra Details */}
             <div>
               <label
                 htmlFor="concierge-notes"
                 className="block text-xs font-semibold tracking-wide text-[#17271C] mb-2"
               >
-                Special Customization Notes
+                Extra Details
               </label>
               <textarea
                 id="concierge-notes"
                 rows={3}
                 value={customNotes}
                 onChange={(e) => setCustomNotes(e.target.value)}
-                placeholder="Polaroid photos attached, midnight delivery, specific wrapping style, or custom bouquet size..."
+                placeholder="Add photo prints, midnight delivery, special wrapping color, or bouquet size..."
                 className="w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] placeholder:text-[#4F6D52]/55 focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52] resize-none leading-relaxed transition-shadow"
               />
             </div>
@@ -238,20 +239,20 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
             {/* WhatsApp Inquiry CTA Row */}
             <div className="pt-3 border-t border-[#C8B288]/40 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <p className="text-xs text-[#4F6D52] leading-relaxed">
-                Direct reply from our Indore master florists with seasonal stem
-                availability and custom pricing.
+                Get a quick reply from our Indore florists with flower
+                availability and price.
               </p>
 
-              <div className="flex items-center gap-2.5 shrink-0">
+              <div className="flex flex-col xs:flex-row sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
                 <a
                   href={whatsAppHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleWhatsAppClick}
-                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#17271C] text-[#EDE0C9] hover:bg-[#4F6D52] hover:text-[#FAF7F2] text-xs sm:text-sm font-semibold tracking-wide transition-colors whitespace-nowrap shadow-[0_10px_24px_rgba(23,39,28,0.16)]"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3.5 rounded-full bg-[#17271C] text-[#EDE0C9] hover:bg-[#4F6D52] hover:text-[#FAF7F2] text-xs sm:text-sm font-semibold tracking-wide transition-colors shadow-[0_10px_24px_rgba(23,39,28,0.16)]"
                 >
                   <MessageCircle className="w-4 h-4 shrink-0" />
-                  <span>Send Custom Request on WhatsApp</span>
+                  <span>Order on WhatsApp</span>
                 </a>
 
                 <button
@@ -259,7 +260,7 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
                   onClick={handleCopyInquiry}
                   title="Copy custom request summary"
                   aria-label="Copy custom request summary"
-                  className="inline-flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full border border-[#A7C0A8] bg-[#EBF1EC]/70 text-[#17271C] hover:bg-[#EDE0C9]/55 text-xs font-medium transition-colors whitespace-nowrap shrink-0"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-3 sm:py-3.5 rounded-full border border-[#A7C0A8] bg-[#EBF1EC]/70 text-[#17271C] hover:bg-[#EDE0C9]/55 text-xs font-medium transition-colors whitespace-nowrap shrink-0"
                 >
                   <Copy className="w-3.5 h-3.5 text-[#4F6D52]" />
                   <span>{copied ? 'Copied' : 'Copy'}</span>

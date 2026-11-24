@@ -11,12 +11,16 @@ import {
 } from '@/lib/bouquet-data';
 
 function checkPublicAsset(publicRelativePath: string): boolean {
-  const fullPath = path.join(
-    process.cwd(),
-    'public',
-    publicRelativePath.replace(/^\/+/, '')
-  );
-  return fs.existsSync(fullPath);
+  try {
+    const fullPath = path.join(
+      process.cwd(),
+      'public',
+      publicRelativePath.replace(/^\/+/, '')
+    );
+    return fs.existsSync(fullPath);
+  } catch {
+    return false;
+  }
 }
 
 function detectOptionalAssets(): AvailableOptionalAssets {

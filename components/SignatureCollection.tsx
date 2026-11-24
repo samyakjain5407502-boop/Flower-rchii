@@ -36,16 +36,16 @@ export function SignatureCollection({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <p className="text-xs tracking-[0.24em] text-[#4F6D52] font-medium mb-2.5">
-              SIGNATURE PRE-MADE COLLECTION
+              READY-MADE FAVORITES
             </p>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] text-[#17271C] leading-[1.1] text-balance">
-              Curated House Arrangements
+              Popular Bouquets
             </h2>
           </div>
           <p className="text-sm text-[#4F6D52] max-w-md leading-relaxed">
-            Begin with an iconic FLOWER rchii composition. Tap any edition to
-            load its exact stems, wrapping paper, and ribbon directly onto the
-            3D Atelier stage.
+            Start with one of our most-loved FLOWER rchii bouquets. Tap any
+            bouquet to change its flowers, paper, or ribbon in 3D, or add it
+            straight to your bag.
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export function SignatureCollection({
                   delay: index * 0.08,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className={`group flex flex-col justify-between rounded-[28px] p-6 sm:p-7 border transition-all duration-200 hover:-translate-y-0.5 ${
+                className={`group flex flex-col justify-between rounded-[24px] sm:rounded-[28px] p-5 sm:p-7 border transition-all duration-200 hover:-translate-y-0.5 ${
                   isLoaded
                     ? 'bg-[#EBF1EC] border-[#4F6D52]'
                     : 'bg-[#F5F1E9]/65 border-[#C8B288]/45 hover:border-[#4F6D52]/60'
@@ -156,23 +156,23 @@ export function SignatureCollection({
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2.5 pt-4 border-t border-[#C8B288]/35">
+                <div className="flex items-center gap-2 sm:gap-2.5 pt-4 border-t border-[#C8B288]/35">
                   <button
                     type="button"
                     onClick={() => onSelectPreset(preset)}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] hover:bg-[#243B2B] text-xs font-semibold tracking-wide transition-colors whitespace-nowrap"
+                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] hover:bg-[#243B2B] text-xs font-semibold tracking-wide transition-colors whitespace-nowrap"
                   >
-                    <span>{isLoaded ? 'Loaded in 3D' : 'Customize in 3D'}</span>
+                    <span>{isLoaded ? 'Selected in 3D' : 'Edit in 3D'}</span>
                     <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
                   </button>
 
                   <button
                     type="button"
                     onClick={() => onQuickAddPreset(preset)}
-                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full border border-[#4F6D52]/50 text-[#17271C] hover:bg-[#4F6D52] hover:text-[#FAF7F2] text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
+                    className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full border border-[#4F6D52]/50 text-[#17271C] hover:bg-[#4F6D52] hover:text-[#FAF7F2] text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
                   >
                     <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-                    <span>Quick Add</span>
+                    <span>Add to Bag</span>
                   </button>
                 </div>
               </motion.article>

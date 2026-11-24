@@ -209,7 +209,7 @@ export function CartDrawer({
             <div className="px-6 py-5 border-b border-[#A7C0A8]/35 flex items-center justify-between gap-4 shrink-0 bg-[#FAF7F2]">
               <div>
                 <h2 className="font-serif text-2xl text-[#17271C] leading-none">
-                  {view === 'bag' && 'Your Atelier Bag'}
+                  {view === 'bag' && 'Your Bag'}
                   {view === 'checkout' && 'Delivery & Payment'}
                   {view === 'confirmed' && 'Order Confirmed'}
                 </h2>
@@ -245,18 +245,18 @@ export function CartDrawer({
                         <ShoppingBag className="w-6 h-6" />
                       </div>
                       <p className="font-serif text-2xl text-[#17271C] mb-1.5">
-                        Your bouquet bag is empty
+                        Your bag is empty
                       </p>
                       <p className="text-xs sm:text-sm text-[#4F6D52] max-w-xs mb-6 leading-relaxed">
-                        Sculpt a bespoke arrangement in the 3D Atelier or pick a
-                        curated house edition to begin.
+                        Design your own custom bouquet or pick one of our
+                        popular ready-made bouquets to start.
                       </p>
                       <button
                         type="button"
                         onClick={handleClose}
                         className="px-6 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] text-xs font-semibold tracking-wide hover:bg-[#243B2B] transition-colors"
                       >
-                        Return to The Atelier
+                        Design Your Bouquet
                       </button>
                     </div>
                   ) : (
@@ -379,13 +379,13 @@ export function CartDrawer({
                           </span>
                         </div>
                         <div className="flex justify-between text-[#17271C]/80">
-                          <span>Chilled Atelier Delivery</span>
+                          <span>Fresh Delivery</span>
                           <span className="tabular-nums font-medium text-[#4F6D52]">
-                            {deliveryFee === 0 ? 'Complimentary' : formatINR(deliveryFee)}
+                            {deliveryFee === 0 ? 'Free' : formatINR(deliveryFee)}
                           </span>
                         </div>
                         <div className="pt-2 border-t border-[#A7C0A8]/40 flex justify-between font-semibold text-[#17271C]">
-                          <span>Total Payable</span>
+                          <span>Total</span>
                           <span className="tabular-nums text-base">
                             {formatINR(grandTotal)}
                           </span>
@@ -614,11 +614,11 @@ export function CartDrawer({
                     ORDER #{confirmedReceipt.orderId}
                   </p>
                   <h3 className="font-serif text-3xl text-[#17271C] mb-2">
-                    Your Blooms Are Reserved
+                    Your Order Is Confirmed
                   </h3>
                   <p className="text-xs sm:text-sm text-[#4F6D52] max-w-sm leading-relaxed mb-7">
-                    Our florists at the FLOWER rchii Atelier have received your
-                    bespoke order for {confirmedReceipt.recipientName}.
+                    Our FLOWER rchii florists have received your order for{' '}
+                    {confirmedReceipt.recipientName}.
                   </p>
 
                   <div className="w-full rounded-2xl p-5 bg-[#EBF1EC]/70 border border-[#C8B288]/55 text-left space-y-2.5 text-xs sm:text-sm mb-7">
@@ -680,7 +680,7 @@ export function CartDrawer({
                   </button>
                 )}
 
-                {/* Send Order on WhatsApp Summary Action */}
+                {/* Order on WhatsApp Summary Action */}
                 <div className="flex items-center gap-2">
                   <a
                     href={whatsAppHref}
@@ -690,7 +690,7 @@ export function CartDrawer({
                     className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-full border border-[#4F6D52]/55 bg-[#EBF1EC]/75 text-[#17271C] hover:bg-[#4F6D52] hover:text-[#FAF7F2] text-xs font-semibold transition-colors"
                   >
                     <MessageCircle className="w-4 h-4 shrink-0" />
-                    <span>Send Order on WhatsApp</span>
+                    <span>Order on WhatsApp</span>
                   </a>
                   <button
                     type="button"
