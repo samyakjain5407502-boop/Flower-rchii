@@ -358,7 +358,7 @@ function enforceStylistConstraints(
               ? ['lily', 'babys-breath', 'eucalyptus']
               : BLOOM_IDS.filter((id) => stems[id] > 0);
 
-    const safePool = topUpPool.length > 0 ? topUpPool : ['blush-rose', 'babys-breath'];
+   const safePool: BloomId[] = topUpPool.length > 0 ? topUpPool : ['blush-rose', 'babys-breath'];
     let addSafety = 0;
     while (getTotalStems(stems) < MAX_TOTAL_STEMS && addSafety < 25) {
       addSafety += 1;
