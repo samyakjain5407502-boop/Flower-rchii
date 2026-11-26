@@ -12,7 +12,7 @@ interface NavbarProps {
 export function Navbar({ cartCount, onOpenCart }: NavbarProps) {
   return (
     <header className="sticky top-0 z-40 w-full bg-[#17271C] border-b border-[#C8B288]/30">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-3 sm:gap-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3 sm:gap-8">
         {/* Zone 1: Official FLOWER rchii Logo Crest + Single-Line Wordmark */}
         <a
           href="#top"
@@ -42,7 +42,7 @@ export function Navbar({ cartCount, onOpenCart }: NavbarProps) {
         {/* Zone 2: Clean Single-Line Navigation Links */}
         <nav
           aria-label="Primary navigation"
-          className="hidden md:flex items-center gap-8 text-sm font-normal text-[#EDE0C9]/80"
+          className="hidden lg:flex items-center gap-8 text-sm font-normal text-[#EDE0C9]/80"
         >
           <a
             href="#atelier"
@@ -75,7 +75,7 @@ export function Navbar({ cartCount, onOpenCart }: NavbarProps) {
           <button
             type="button"
             onClick={onOpenCart}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#EDE0C9] text-[#17271C] hover:bg-[#FAF7F2] text-xs sm:text-sm font-medium transition-colors whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B288] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17271C]"
+            className="inline-flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-full bg-[#EDE0C9] text-[#17271C] hover:bg-[#FAF7F2] text-xs sm:text-sm font-medium transition-colors whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B288] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17271C]"
           >
             <ShoppingBag className="w-4 h-4 shrink-0" />
             <span>Bag</span>

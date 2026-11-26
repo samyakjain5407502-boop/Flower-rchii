@@ -7,7 +7,6 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
-  useSpring,
   useTransform,
 } from 'motion/react';
 import { ArrowDown, ChevronDown } from 'lucide-react';
@@ -101,12 +100,7 @@ export function EditorialHero({
     offset: ['start start', 'end end'],
   });
 
-  // Smooth spring-damped progress prevents jittery frame jumps on wheel/trackpad
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 150,
-    damping: 30,
-    mass: 0.35,
-  });
+  const progress = scrollYProgress;
 
   // Dev-only console note when /public/hero/bloom-001.webp…036.webp are not yet uploaded
   useEffect(() => {
@@ -184,7 +178,7 @@ export function EditorialHero({
   }, [hasWebpSequence, prefersReducedMotion]);
 
   // Scrub WebP sequence on canvas between 8% and 38% scroll progress
-  useMotionValueEvent(smoothProgress, 'change', (latest) => {
+  useMotionValueEvent(progress, 'change', (latest) => {
     if (!hasWebpSequence) return;
     const canvas = bloomCanvasRef.current;
     if (!canvas) return;
@@ -229,78 +223,78 @@ export function EditorialHero({
   // =========================================================================
 
   // Phase 1 (0–11%): Logo crest & Scroll hint — 100% gone BEFORE full bloom or 3 panels
-  const crestOpacity = useTransform(smoothProgress, [0, 0.055, 0.11], [1, 0.6, 0]);
-  const crestScale = useTransform(smoothProgress, [0, 0.11], [1, 0.86]);
-  const scrollHintOpacity = useTransform(smoothProgress, [0, 0.07], [1, 0]);
+  const crestOpacity = useTransform(progress, [0, 0.055, 0.11], [1, 0.6, 0]);
+  const crestScale = useTransform(progress, [0, 0.11], [1, 0.86]);
+  const scrollHintOpacity = useTransform(progress, [0, 0.07], [1, 0]);
 
   // Phase 2 (8–42%): Crisp unfolding peony + fanning eucalyptus foliage inside the oval
   const bloomStageOpacity = useTransform(
-    smoothProgress,
+    progress,
     [0.07, 0.14, 0.35, 0.44],
     [0, 1, 1, 0]
   );
   const glowOpacity = useTransform(
-    smoothProgress,
+    progress,
     [0.08, 0.25, 0.4],
     [0.15, 0.92, 0]
   );
-  const glowScale = useTransform(smoothProgress, [0.08, 0.36], [0.55, 1.2]);
+  const glowScale = useTransform(progress, [0.08, 0.36], [0.55, 1.2]);
 
   // Subtle shadowed outer petal halo behind main bloom (adds 3D depth without smearing)
-  const haloScale = useTransform(smoothProgress, [0.08, 0.36], [0.46, 1.08]);
-  const haloRotate = useTransform(smoothProgress, [0.08, 0.36], [-16, 0]);
+  const haloScale = useTransform(progress, [0.08, 0.36], [0.46, 1.08]);
+  const haloRotate = useTransform(progress, [0.08, 0.36], [-16, 0]);
   const haloOpacity = useTransform(
-    smoothProgress,
+    progress,
     [0.08, 0.2, 0.36],
     [0, 0.42, 0.35]
   );
 
   // Botanical eucalyptus sprigs gently fanning out left & right
-  const leftLeafScale = useTransform(smoothProgress, [0.1, 0.36], [0.45, 0.92]);
-  const leftLeafRotate = useTransform(smoothProgress, [0.1, 0.36], [-14, -36]);
-  const leftLeafX = useTransform(smoothProgress, [0.1, 0.36], [8, -28]);
-  const rightLeafScale = useTransform(smoothProgress, [0.1, 0.36], [0.45, 0.92]);
-  const rightLeafRotate = useTransform(smoothProgress, [0.1, 0.36], [14, 36]);
-  const rightLeafX = useTransform(smoothProgress, [0.1, 0.36], [-8, 28]);
+  const leftLeafScale = useTransform(progress, [0.1, 0.36], [0.45, 0.92]);
+  const leftLeafRotate = useTransform(progress, [0.1, 0.36], [-14, -36]);
+  const leftLeafX = useTransform(progress, [0.1, 0.36], [8, -28]);
+  const rightLeafScale = useTransform(progress, [0.1, 0.36], [0.45, 0.92]);
+  const rightLeafRotate = useTransform(progress, [0.1, 0.36], [14, 36]);
+  const rightLeafX = useTransform(progress, [0.1, 0.36], [-8, 28]);
   const leafOpacity = useTransform(
-    smoothProgress,
+    progress,
     [0.11, 0.24, 0.37],
     [0, 0.85, 0.88]
   );
 
   // Single razor-sharp hero Dutch Peony opening cleanly in the center
-  const heroBloomScale = useTransform(smoothProgress, [0.08, 0.36], [0.38, 1.0]);
-  const heroBloomRotate = useTransform(smoothProgress, [0.08, 0.36], [12, 0]);
+  const heroBloomScale = useTransform(progress, [0.08, 0.36], [0.38, 1.0]);
+  const heroBloomRotate = useTransform(progress, [0.08, 0.36], [12, 0]);
   const heroBloomOpacity = useTransform(
-    smoothProgress,
+    progress,
     [0.08, 0.16, 0.36],
     [0.2, 1, 1]
   );
 
-  // Phase 3 (36–49%): Unified Oval Iris Aperture opens cleanly (scale 1 → 5.2, opacity 1 → 0)
+  // Phase 3 (36–49%): Unified Oval Iris Aperture opens cleanly (scale 1 → 12, opacity 1 → 0)
   // Completely vanishes before the 3 story panels enter so logo/wall NEVER bleed through!
-  const irisScale = useTransform(smoothProgress, [0.36, 0.5], [1, 5.2]);
-  const irisWallOpacity = useTransform(smoothProgress, [0.42, 0.5], [1, 0]);
+  const irisScale = useTransform(progress, [0.36, 0.5], [1, 12]);
+  const irisWallOpacity = useTransform(progress, [0.42, 0.5], [1, 0]);
 
   // Phase 4 (44–84%): Editorial Ivory-to-Mint stage + H1 + Subhead + 3 Arch Panels
   const editorialStageOpacity = useTransform(
-    smoothProgress,
+    progress,
     [0.4, 0.48],
     [0, 1]
   );
-  const h1Opacity = useTransform(smoothProgress, [0.43, 0.52], [0, 1]);
-  const h1Y = useTransform(smoothProgress, [0.43, 0.52], [24, 0]);
-  const subheadOpacity = useTransform(smoothProgress, [0.49, 0.58], [0, 1]);
-  const subheadY = useTransform(smoothProgress, [0.49, 0.58], [18, 0]);
+  const h1Opacity = useTransform(progress, [0.43, 0.52], [0, 1]);
+  const h1Y = useTransform(progress, [0.43, 0.52], [24, 0]);
+  const subheadOpacity = useTransform(progress, [0.49, 0.58], [0, 1]);
+  const subheadY = useTransform(progress, [0.49, 0.58], [18, 0]);
 
-  const panel0Opacity = useTransform(smoothProgress, [0.56, 0.65], [0, 1]);
-  const panel0Y = useTransform(smoothProgress, [0.56, 0.65], [34, 0]);
+  const panel0Opacity = useTransform(progress, [0.56, 0.65], [0, 1]);
+  const panel0Y = useTransform(progress, [0.56, 0.65], [34, 0]);
 
-  const panel1Opacity = useTransform(smoothProgress, [0.64, 0.73], [0, 1]);
-  const panel1Y = useTransform(smoothProgress, [0.64, 0.73], [34, 0]);
+  const panel1Opacity = useTransform(progress, [0.64, 0.73], [0, 1]);
+  const panel1Y = useTransform(progress, [0.64, 0.73], [34, 0]);
 
-  const panel2Opacity = useTransform(smoothProgress, [0.72, 0.81], [0, 1]);
-  const panel2Y = useTransform(smoothProgress, [0.72, 0.81], [34, 0]);
+  const panel2Opacity = useTransform(progress, [0.72, 0.81], [0, 1]);
+  const panel2Y = useTransform(progress, [0.72, 0.81], [34, 0]);
 
   const panelMotion = [
     { opacity: panel0Opacity, y: panel0Y },
@@ -308,9 +302,12 @@ export function EditorialHero({
     { opacity: panel2Opacity, y: panel2Y },
   ];
 
+  const stageVisibility = useTransform(progress, value => value >= 1 ? 'hidden' : 'visible');
+  const stageOpacity = useTransform(progress, [0.9, 1], [1, 0]);
+
   // Phase 5 (82–94%): Action CTAs fade in cleanly
-  const ctaOpacity = useTransform(smoothProgress, [0.81, 0.9], [0, 1]);
-  const ctaY = useTransform(smoothProgress, [0.81, 0.9], [20, 0]);
+  const ctaOpacity = useTransform(progress, [0.81, 0.9], [0, 1]);
+  const ctaY = useTransform(progress, [0.81, 0.9], [20, 0]);
 
   // Always use transparent cleaned cutouts (never raw white-box PNGs)
   const peonyDataUrl = cutouts?.peony?.dataUrl ?? null;
@@ -435,7 +432,7 @@ export function EditorialHero({
             <button
               type="button"
               onClick={onEnterAtelier}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] hover:bg-[#4F6D52] text-xs sm:text-sm font-semibold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
+              className="pointer-events-auto inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] hover:bg-[#4F6D52] text-xs sm:text-sm font-semibold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
             >
               <span>Design Your Bouquet</span>
               <ArrowDown className="w-4 h-4 shrink-0" />
@@ -443,7 +440,7 @@ export function EditorialHero({
             <button
               type="button"
               onClick={onExploreCollection}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#A7C0A8] bg-[#FAF7F2] text-[#17271C] hover:bg-[#EBF1EC] text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
+              className="pointer-events-auto inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#A7C0A8] bg-[#FAF7F2] text-[#17271C] hover:bg-[#EBF1EC] text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
             >
               <span>Popular Bouquets</span>
             </button>
@@ -458,10 +455,9 @@ export function EditorialHero({
       id="top"
       ref={containerRef}
       aria-label="FLOWER rchii — The Bloom Iris"
-      className="relative h-[300vh] bg-[#17271C]"
+      className="relative z-10 h-[300vh] mb-[-100vh] pointer-events-none"
     >
-      {/* Sticky full-viewport stage positioned cleanly BELOW the h-16 sticky Navbar */}
-      <div className="sticky top-16 h-[calc(100svh-4rem)] w-full overflow-hidden flex items-center justify-center bg-[#17271C]">
+      <motion.div style={{ opacity: stageOpacity, visibility: stageVisibility }} className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#17271C]">
         {/* === LAYER 1: REVEALED IVORY-TO-MINT RADIAL STAGE (44–100%) === */}
         <motion.div
           style={{
@@ -615,7 +611,7 @@ export function EditorialHero({
               <button
                 type="button"
                 onClick={onEnterAtelier}
-                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] hover:bg-[#4F6D52] text-xs sm:text-sm font-semibold tracking-wide transition-colors shadow-[0_10px_24px_rgba(23,39,28,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
+                className="pointer-events-auto inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#17271C] text-[#EDE0C9] border border-[#C8B288] hover:bg-[#4F6D52] text-xs sm:text-sm font-semibold tracking-wide transition-colors shadow-[0_10px_24px_rgba(23,39,28,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
               >
                 <span>Design Your Bouquet</span>
                 <ArrowDown className="w-4 h-4 shrink-0" />
@@ -623,7 +619,7 @@ export function EditorialHero({
               <button
                 type="button"
                 onClick={onExploreCollection}
-                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-[#A7C0A8] bg-[#FAF7F2] text-[#17271C] hover:bg-[#EBF1EC] text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
+                className="pointer-events-auto inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full border border-[#A7C0A8] bg-[#FAF7F2] text-[#17271C] hover:bg-[#EBF1EC] text-xs sm:text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4F6D52]"
               >
                 <span>Popular Bouquets</span>
               </button>
@@ -799,11 +795,11 @@ export function EditorialHero({
         </motion.div>
 
         {/* === TOP-RIGHT SKIP INTRO PILL (clearly visible below Navbar) === */}
-        <div className="absolute top-4 right-4 sm:top-6 sm:right-8 z-30">
+        <div className="absolute top-20 right-4 sm:top-24 sm:right-8 z-30">
           <button
             type="button"
             onClick={onEnterAtelier}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#17271C]/90 border border-[#C8B288]/70 text-[#EDE0C9] hover:bg-[#4F6D52] hover:border-[#EDE0C9] text-xs font-medium tracking-wide transition-colors whitespace-nowrap shadow-[0_6px_20px_rgba(23,39,28,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B288]"
+            className="pointer-events-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#17271C]/90 border border-[#C8B288]/70 text-[#EDE0C9] hover:bg-[#4F6D52] hover:border-[#EDE0C9] text-xs font-medium tracking-wide transition-colors whitespace-nowrap shadow-[0_6px_20px_rgba(23,39,28,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B288]"
           >
             <span>Skip Intro</span>
             <ArrowDown className="w-3.5 h-3.5 shrink-0" />
@@ -819,7 +815,7 @@ export function EditorialHero({
             type="button"
             onClick={onEnterAtelier}
             aria-label="Scroll to enter the atelier"
-            className="inline-flex flex-col items-center gap-1 text-[#EDE0C9] hover:text-[#C8B288] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B288] rounded-full px-3 py-1"
+            className="pointer-events-auto inline-flex flex-col items-center gap-1 text-[#EDE0C9] hover:text-[#C8B288] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B288] rounded-full px-3 py-1"
           >
             <span className="text-[11px] tracking-[0.28em] uppercase font-medium">
               Scroll
@@ -832,7 +828,7 @@ export function EditorialHero({
             </motion.span>
           </button>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

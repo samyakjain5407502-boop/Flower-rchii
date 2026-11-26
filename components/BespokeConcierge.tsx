@@ -88,7 +88,7 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
     <section
       id="concierge"
       aria-label="Custom Bouquet Requests"
-      className="py-16 sm:py-24 px-5 sm:px-8 bg-[#EBF1EC] border-t border-[#A7C0A8]/45"
+      className="py-16 sm:py-24 px-4 sm:px-6 bg-[#EBF1EC] border-t border-[#A7C0A8]/45"
     >
       <div className="max-w-[1120px] mx-auto">
         {/* Header with Champagne Oval Accent */}
@@ -156,7 +156,7 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
                       key={occasion}
                       type="button"
                       onClick={() => setSelectedOccasion(occasion)}
-                      className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap border ${
+                      className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all max-w-full break-words border ${
                         active
                           ? 'bg-[#17271C] text-[#EDE0C9] border-[#17271C] shadow-sm'
                           : 'bg-[#EBF1EC]/70 text-[#17271C] border-[#A7C0A8]/60 hover:border-[#4F6D52] hover:bg-[#EBF1EC]'
@@ -183,7 +183,7 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
                 value={paletteInput}
                 onChange={(e) => setPaletteInput(e.target.value)}
                 placeholder="e.g. Soft pink roses & white lilies, or a ₹3,000 surprise bouquet"
-                className="w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] placeholder:text-[#4F6D52]/55 focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52] transition-shadow"
+                className="min-w-0 max-w-full w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] placeholder:text-[#4F6D52]/55 focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52] transition-shadow"
               />
             </div>
 
@@ -201,7 +201,7 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
                 value={customNotes}
                 onChange={(e) => setCustomNotes(e.target.value)}
                 placeholder="Add photo prints, midnight delivery, special wrapping color, or bouquet size..."
-                className="w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] placeholder:text-[#4F6D52]/55 focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52] resize-none leading-relaxed transition-shadow"
+                className="min-w-0 max-w-full w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] placeholder:text-[#4F6D52]/55 focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52] resize-none leading-relaxed transition-shadow"
               />
             </div>
 
@@ -221,7 +221,7 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
                   min={new Date().toISOString().split('T')[0]}
                   value={deliveryDate}
                   onChange={(e) => setDeliveryDate(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52]"
+                  className="min-w-0 max-w-full w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52]"
                 />
               </div>
 
@@ -239,7 +239,7 @@ export function BespokeConcierge({ onNotify }: BespokeConciergeProps) {
                   value={deliveryArea}
                   onChange={(e) => setDeliveryArea(e.target.value)}
                   placeholder="Vijay Nagar, Saket, Palasia — Indore"
-                  className="w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] placeholder:text-[#4F6D52]/55 focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52]"
+                  className="min-w-0 max-w-full w-full px-4 py-3 rounded-2xl bg-[#FAF7F2] border border-[#A7C0A8]/70 text-sm text-[#17271C] placeholder:text-[#4F6D52]/55 focus:outline-none focus:ring-2 focus:ring-[#4F6D52] focus:border-[#4F6D52]"
                 />
               </div>
             </div>

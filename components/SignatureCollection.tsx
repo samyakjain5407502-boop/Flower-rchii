@@ -126,7 +126,7 @@ export function SignatureCollection({
         </div>
 
         {/* Fix 4: grid-cols-1 on mobile (<768px), 3-col on md+ */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {SIGNATURE_PRESETS.map((preset, index) => {
             const pricing = getBouquetPricing({
               wrapId: preset.wrapId,
@@ -156,15 +156,15 @@ export function SignatureCollection({
                   delay: index * 0.08,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                /* Fix 1: flex-col with overflow-visible so card content never clips */
-                className={`group flex flex-col rounded-[24px] sm:rounded-[28px] border transition-all duration-200 hover:-translate-y-0.5 overflow-visible ${
+
+                className={`group min-w-0 max-w-full box-border flex flex-col rounded-[24px] sm:rounded-[28px] border transition-all duration-200 hover:-translate-y-0.5 overflow-hidden ${
                   isLoaded
                     ? 'bg-[#EBF1EC] border-[#4F6D52]'
                     : 'bg-[#F5F1E9]/65 border-[#C8B288]/45 hover:border-[#4F6D52]/60'
                 }`}
               >
                 {/* Inner content wrapper with proper padding */}
-                <div className="p-5 sm:p-7 flex flex-col flex-1">
+                <div className="px-4 py-5 sm:px-6 flex flex-col flex-1">
                   {/* Top visual: real photo when available, else real flower cluster */}
                   {availableBouquetPhotos?.[preset.id] ? (
                     <div className="relative mb-6 rounded-t-[110px] rounded-b-[20px] bg-[#FAF7F2] border border-[#C8B288]/55 overflow-hidden">
@@ -179,8 +179,8 @@ export function SignatureCollection({
                           className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         />
                       </div>
-                      <div className="px-4 py-2.5 bg-[#FAF7F2] border-t border-[#C8B288]/35 flex items-center justify-between gap-2 text-[11px] text-[#4F6D52]">
-                        <span className="truncate">{preset.subtitle}</span>
+                      <div className="px-4 py-2.5 bg-[#FAF7F2] border-t border-[#C8B288]/35 flex min-w-0 max-w-full box-border overflow-hidden flex-wrap items-center justify-between gap-2 text-[11px] text-[#4F6D52]">
+                        <span className="min-w-0 max-w-full break-words rounded-full bg-[#EDE0C9] px-2.5 py-1 text-[11px]">{preset.subtitle}</span>
                         <span className="tabular-nums font-medium text-[#17271C] shrink-0">
                           {pricing.totalStems} stems
                         </span>
@@ -188,9 +188,9 @@ export function SignatureCollection({
                     </div>
                   ) : (
                     /* Fix 2: Real flower cluster preview instead of colour dots */
-                    <div className="relative mb-6 rounded-t-[110px] rounded-b-[20px] pt-5 pb-4 px-5 bg-[#FAF7F2] border border-[#C8B288]/45 overflow-visible">
-                      <div className="flex items-center justify-between text-[11px] text-[#4F6D52] mb-4">
-                        <span>{preset.subtitle}</span>
+                    <div className="relative mb-6 rounded-[20px] pt-5 pb-4 px-5 bg-[#FAF7F2] border border-[#C8B288]/45 overflow-hidden">
+                      <div className="flex min-w-0 max-w-full box-border overflow-hidden flex-wrap items-center justify-between text-[11px] text-[#4F6D52] mb-4">
+                        <span className="max-w-full box-border break-words rounded-full bg-[#EDE0C9] px-2.5 py-1 text-[11px]">{preset.subtitle}</span>
                         <span className="tabular-nums font-medium text-[#17271C]">
                           {pricing.totalStems} stems
                         </span>
@@ -199,16 +199,16 @@ export function SignatureCollection({
                       {/* Layered real flower cutout preview */}
                       <FlowerCluster presetId={preset.id} />
 
-                      <div className="mt-4 pt-3 border-t border-[#C8B288]/30 flex items-center justify-center gap-2 text-[11px] text-[#4F6D52] text-center">
-                        <span className="truncate">{wrap.name}</span>
+                      <div className="mt-4 pt-3 border-t border-[#C8B288]/30 flex max-w-full flex-wrap items-center justify-center gap-2 text-[11px] text-[#4F6D52] text-center">
+                        <span className="min-w-0 max-w-full break-words">{wrap.name}</span>
                         <span aria-hidden="true">·</span>
-                        <span className="truncate">{ribbon.name}</span>
+                        <span className="min-w-0 max-w-full break-words">{ribbon.name}</span>
                       </div>
                     </div>
                   )}
 
                   {/* Fix 1: Card copy — no overflow clipping, all text 100% visible */}
-                  <div className="flex items-baseline justify-between gap-3 mb-2">
+                  <div className="flex max-w-full box-border overflow-hidden flex-wrap items-baseline justify-between gap-3 mb-2">
                     <h3 className="font-serif text-2xl text-[#17271C] leading-snug">
                       {preset.name}
                     </h3>
@@ -230,11 +230,11 @@ export function SignatureCollection({
                   <div className="flex-1" />
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 sm:gap-2.5 pt-4 border-t border-[#C8B288]/35">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 pt-4 border-t border-[#C8B288]/35">
                     <button
                       type="button"
                       onClick={() => onSelectPreset(preset)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] hover:bg-[#243B2B] text-xs font-semibold tracking-wide transition-colors whitespace-nowrap"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full bg-[#17271C] text-[#EDE0C9] hover:bg-[#243B2B] text-xs font-semibold tracking-wide transition-colors max-w-full whitespace-normal"
                     >
                       <span>{isLoaded ? 'Selected in 3D' : 'Edit in 3D'}</span>
                       <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
@@ -243,7 +243,7 @@ export function SignatureCollection({
                     <button
                       type="button"
                       onClick={() => onQuickAddPreset(preset)}
-                      className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full border border-[#4F6D52]/50 text-[#17271C] hover:bg-[#4F6D52] hover:text-[#FAF7F2] text-xs font-semibold transition-colors whitespace-nowrap shrink-0"
+                      className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-full border border-[#4F6D52]/50 text-[#17271C] hover:bg-[#4F6D52] hover:text-[#FAF7F2] text-xs font-semibold transition-colors max-w-full whitespace-normal shrink-0"
                     >
                       <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
                       <span>Add to Bag</span>

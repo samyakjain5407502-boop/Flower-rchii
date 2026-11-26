@@ -206,7 +206,7 @@ export function CartDrawer({
             className="relative z-10 w-full max-w-lg h-full bg-[#FAF7F2]/96 backdrop-blur-md border-l border-[#C8B288]/45 shadow-2xl flex flex-col"
           >
             {/* Drawer Header */}
-            <div className="px-6 py-5 border-b border-[#A7C0A8]/35 flex items-center justify-between gap-4 shrink-0 bg-[#FAF7F2]">
+            <div className="px-4 sm:px-6 py-5 border-b border-[#A7C0A8]/35 flex items-center justify-between gap-4 shrink-0 bg-[#FAF7F2]">
               <div>
                 <h2 className="font-serif text-2xl text-[#17271C] leading-none">
                   {view === 'bag' && 'Your Bag'}
@@ -235,7 +235,7 @@ export function CartDrawer({
             </div>
 
             {/* Drawer Body */}
-            <div className="flex-1 overflow-y-auto atelier-scroll px-6 py-5">
+            <div className="flex-1 overflow-y-auto atelier-scroll px-4 sm:px-6 py-5">
               {/* VIEW 1: ITEMIZED BAG */}
               {view === 'bag' && (
                 <>
@@ -276,7 +276,7 @@ export function CartDrawer({
                             key={item.id}
                             className="rounded-2xl p-4 sm:p-5 bg-[#FAF7F2] border border-[#C8B288]/50"
                           >
-                            <div className="flex items-start justify-between gap-3 mb-3">
+                            <div className="flex min-w-0 max-w-full break-words flex-wrap items-start justify-between gap-3 mb-3">
                               <div>
                                 <h3 className="font-serif text-xl text-[#17271C] leading-snug">
                                   {item.title}
@@ -339,7 +339,7 @@ export function CartDrawer({
                             )}
 
                             {/* Quantity & Line Total */}
-                            <div className="mt-4 flex items-center justify-between">
+                            <div className="mt-4 flex flex-wrap gap-2 items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <button
                                   type="button"

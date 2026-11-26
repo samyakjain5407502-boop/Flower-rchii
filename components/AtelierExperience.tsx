@@ -465,13 +465,13 @@ export function AtelierExperience({
   };
 
   return (
-    <div className="min-h-screen w-full max-w-[100vw] flex flex-col bg-[#FAF7F2] text-[#17271C] overflow-x-hidden">
+    <div className="min-h-screen w-full max-w-full flex flex-col bg-[#FAF7F2] text-[#17271C] min-w-0">
       <Navbar
         cartCount={totalCartCount}
         onOpenCart={() => setCartOpen(true)}
       />
 
-      <main className="flex-1 w-full max-w-[100vw] overflow-x-hidden">
+      <main className="flex-1 w-full max-w-full min-w-0">
         {/* Section 1: Editorial Brand Hero ("The Bloom Iris") */}
         <EditorialHero
           availableAssets={availableAssets}
@@ -483,7 +483,7 @@ export function AtelierExperience({
         <section
           id="atelier"
           aria-label="Design Your Custom 3D Bouquet"
-          className="relative w-full max-w-[100vw] border-b border-[#A7C0A8]/35 bg-[#FAF7F2]"
+          className="relative min-w-0 w-full max-w-full border-b border-[#A7C0A8]/35 bg-[#FAF7F2]"
         >
           {/*
             Mobile (< 768px): Full-width vertical stacked layout — sticky compact 3D stage (h-[44vh] w-full) on top,
@@ -585,7 +585,7 @@ export function AtelierExperience({
         </section>
 
         {/* Section 3: Ready-Made Bouquets */}
-        <div className="w-full max-w-[100vw] overflow-x-hidden">
+        <div className="w-full max-w-full overflow-x-hidden">
           <SignatureCollection
             activePresetName={config.presetName}
             availableBouquetPhotos={availableAssets.bouquets}
@@ -595,14 +595,14 @@ export function AtelierExperience({
         </div>
 
         {/* Section 4: Custom Order Request */}
-        <div className="w-full max-w-[100vw] overflow-x-hidden">
+        <div className="w-full max-w-full overflow-x-hidden">
           <BespokeConcierge onNotify={notify} />
         </div>
 
         {/* Section 5: Simple Brand Promise Footer */}
         <section
           id="craft"
-          className="w-full max-w-[100vw] overflow-x-hidden py-16 sm:py-20 px-5 sm:px-8 bg-[#17271C] text-[#EDE0C9]"
+          className="w-full max-w-full overflow-x-hidden py-16 sm:py-20 px-5 sm:px-8 bg-[#17271C] text-[#EDE0C9]"
         >
           <div className="max-w-[1440px] mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 pb-12 border-b border-[#C8B288]/20">

@@ -176,7 +176,7 @@ export function CustomizerPanel({
     <div className="flex flex-col w-full md:h-full bg-[#FAF7F2] md:border-l border-[#A7C0A8]/40 overflow-x-hidden max-w-full">
       {/* Panel Header & 3-Step Tabs */}
       <div className="px-4 sm:px-6 pt-4 sm:pt-5 pb-3.5 border-b border-[#A7C0A8]/30 shrink-0">
-        <div className="flex items-baseline justify-between gap-3 mb-3">
+        <div className="flex min-w-0 max-w-full flex-wrap items-baseline justify-between gap-3 mb-3">
           <div className="min-w-0">
             <h2 className="font-serif text-2xl sm:text-[28px] text-[#17271C] leading-tight">
               Design Your Bouquet
@@ -298,7 +298,7 @@ export function CustomizerPanel({
               className="space-y-6"
             >
               <div>
-                <div className="flex items-baseline justify-between gap-2 mb-1">
+                <div className="flex min-w-0 max-w-full flex-wrap items-baseline justify-between gap-2 mb-1">
                   <h3 className="font-serif text-xl text-[#17271C]">
                     Step 1: Choose Paper &amp; Ribbon
                   </h3>
@@ -385,7 +385,7 @@ export function CustomizerPanel({
 
               {/* Ribbon Selection */}
               <div>
-                <div className="flex items-baseline justify-between mb-2">
+                <div className="flex min-w-0 max-w-full flex-wrap items-baseline justify-between mb-2">
                   <p className="text-xs font-semibold text-[#17271C]">Ribbon</p>
                   <span className="text-xs text-[#4F6D52]">Included</span>
                 </div>
@@ -481,7 +481,7 @@ export function CustomizerPanel({
               transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
               className="space-y-3"
             >
-              <div className="flex items-start justify-between gap-2 mb-1">
+              <div className="flex flex-wrap items-start justify-between gap-2 mb-1">
                 <div>
                   <h3 className="font-serif text-xl text-[#17271C]">
                     Step 2: Pick Your Flowers
@@ -678,7 +678,7 @@ export function CustomizerPanel({
 
               {/* Optional Extras */}
               <div>
-                <div className="flex items-baseline justify-between mb-3">
+                <div className="flex min-w-0 max-w-full flex-wrap items-baseline justify-between mb-3">
                   <h3 className="font-serif text-xl text-[#17271C]">
                     Add a Little Extra
                   </h3>
