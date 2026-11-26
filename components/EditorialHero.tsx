@@ -15,7 +15,6 @@ import {
   type AvailableOptionalAssets,
   type BloomId,
 } from '@/lib/bouquet-data';
-import { useFlowerCutouts } from './three/flower-cutouts';
 
 interface EditorialHeroProps {
   onEnterAtelier: () => void;
@@ -91,7 +90,6 @@ export function EditorialHero({
   const bloomCanvasRef = useRef<HTMLCanvasElement>(null);
   const loadedFramesRef = useRef<(HTMLImageElement | null)[]>([]);
   const prefersReducedMotion = useReducedMotion();
-  const cutouts = useFlowerCutouts();
 
   const hasWebpSequence = availableAssets.heroBloomFrames;
 
@@ -310,8 +308,8 @@ export function EditorialHero({
   const ctaY = useTransform(progress, [0.81, 0.9], [20, 0]);
 
   // Always use transparent cleaned cutouts (never raw white-box PNGs)
-  const peonyDataUrl = cutouts?.peony?.dataUrl ?? null;
-  const eucalyptusDataUrl = cutouts?.eucalyptus?.dataUrl ?? null;
+  const peonyDataUrl = '/hero/peony.webp';
+  const eucalyptusDataUrl = '/hero/eucalyptus.webp';
 
   // === REDUCED MOTION STATIC PRESENTATION ===
   if (prefersReducedMotion) {
@@ -376,7 +374,7 @@ export function EditorialHero({
           <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 pb-2 mb-6">
             {STORY_PANELS.map((panel) => {
               const hasPhoto = availableAssets.storyPhotos[panel.id];
-              const fallbackDataUrl = cutouts?.[panel.fallbackBloom]?.dataUrl;
+              const fallbackDataUrl = `/hero/${panel.fallbackBloom}.webp`;
               return (
                 <article
                   key={panel.id}
@@ -455,9 +453,9 @@ export function EditorialHero({
       id="top"
       ref={containerRef}
       aria-label="FLOWER rchii — The Bloom Iris"
-      className="relative z-10 h-[300vh] mb-[-100vh] pointer-events-none"
+      className="relative z-10 -mt-[65px] h-[300svh] mb-[-100svh] pointer-events-none"
     >
-      <motion.div style={{ opacity: stageOpacity, visibility: stageVisibility }} className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#17271C]">
+      <motion.div style={{ opacity: stageOpacity, visibility: stageVisibility }} className="sticky top-0 h-[100svh] w-full overflow-hidden flex items-center justify-center bg-[#17271C]">
         {/* === LAYER 1: REVEALED IVORY-TO-MINT RADIAL STAGE (44–100%) === */}
         <motion.div
           style={{
@@ -539,7 +537,7 @@ export function EditorialHero({
             <div className="w-full mt-3.5 sm:mt-6 grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5 pb-1.5 px-4 sm:px-1">
               {STORY_PANELS.map((panel, idx) => {
                 const hasPhoto = availableAssets.storyPhotos[panel.id];
-                const fallbackDataUrl = cutouts?.[panel.fallbackBloom]?.dataUrl;
+                const fallbackDataUrl = `/hero/${panel.fallbackBloom}.webp`;
 
                 return (
                   <motion.article
@@ -639,7 +637,6 @@ export function EditorialHero({
               width: 'min(74vw, 340px)',
               maxHeight: '62svh',
               aspectRatio: '3 / 4',
-              boxShadow: '0 0 0 180vmax #17271C',
             }}
             className="relative rounded-full flex items-center justify-center will-change-transform"
           >

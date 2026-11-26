@@ -6,7 +6,8 @@ import React, {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
+  lazy,
+  Suspense,
 } from 'react';
 import Image from 'next/image';
 import { AnimatePresence, motion } from 'motion/react';
@@ -32,10 +33,7 @@ import {
   type WrapId,
 } from '@/lib/bouquet-data';
 import { downloadBouquetPreviewCard } from '@/lib/preview-card';
-import {
-  BouquetCanvas,
-  type BouquetCanvasHandle,
-} from './three/BouquetCanvas';
+import type { BouquetCanvasHandle } from './three/BouquetCanvas';
 import { Navbar } from './Navbar';
 import { EditorialHero } from './EditorialHero';
 import {
@@ -49,9 +47,9 @@ import { BespokeConcierge } from './BespokeConcierge';
 import { CartDrawer } from './CartDrawer';
 import { AiFloristDrawer, type AiDrawerTab } from './AiFloristDrawer';
 
-const emptySubscribe = () => () => {};
-const getClientSnapshot = () => true;
-const getServerSnapshot = () => false;
+const BouquetCanvas = lazy(() =>
+  import('./three/BouquetCanvas').then(({ BouquetCanvas }) => ({ default: BouquetCanvas }))
+);
 
 interface AtelierExperienceProps {
   availableAssets?: AvailableOptionalAssets;
@@ -60,11 +58,7 @@ interface AtelierExperienceProps {
 export function AtelierExperience({
   availableAssets = DEFAULT_AVAILABLE_ASSETS,
 }: AtelierExperienceProps) {
-  const isClient = useSyncExternalStore(
-    emptySubscribe,
-    getClientSnapshot,
-    getServerSnapshot
-  );
+  const [loadStudio, setLoadStudio] = useState(false);
   const [config, setConfig] = useState<BouquetConfig>(DEFAULT_BOUQUET);
   const [activeStep, setActiveStep] = useState<CustomizerStep>(2);
   const [cameraPreset, setCameraPreset] = useState<CameraPresetId>('front');
@@ -96,6 +90,19 @@ export function AtelierExperience({
 
   const canvasRef = useRef<BouquetCanvasHandle>(null);
   const stageDropRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const stage = stageDropRef.current;
+    if (!stage) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setLoadStudio(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: '45% 0px' });
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, []);
+
   const toastTimerRef = useRef<number | null>(null);
 
   const notify = useCallback((message: string) => {
@@ -499,7 +506,8 @@ export function AtelierExperience({
               onDrop={handleStageDrop}
               className="sticky top-16 z-20 h-[44vh] min-h-[290px] w-full shrink-0 border-b border-[#A7C0A8]/45 bg-[#FAF7F2] md:static md:top-auto md:z-auto md:w-[58%] lg:w-[60%] md:h-full md:border-b-0"
             >
-              {isClient ? (
+              <Suspense fallback={<StudioPlaceholder />}>
+                {loadStudio ? (
                 <BouquetCanvas
                   ref={canvasRef}
                   config={config}
@@ -514,19 +522,8 @@ export function AtelierExperience({
                   isExportingCard={isExportingCard}
                   compactControls={false}
                 />
-              ) : (
-                <div className="w-full h-full atelier-radial-stage flex flex-col items-center justify-center px-6 text-center">
-                  <div className="w-16 h-20 rounded-full border border-[#C8B288]/70 flex items-center justify-center mb-4">
-                    <Flower2 className="w-6 h-6 text-[#4F6D52]" />
-                  </div>
-                  <p className="font-serif text-xl text-[#17271C]">
-                    Loading Your 3D Bouquet…
-                  </p>
-                  <p className="text-xs text-[#4F6D52] mt-1">
-                    Setting up flowers, wrapping paper, and studio light
-                  </p>
-                </div>
-              )}
+                ) : <StudioPlaceholder />}
+              </Suspense>
 
               {/* Champagne Gold (#C8B288) Dashed Drop Glow Ring & Floating Hint */}
               <AnimatePresence>
@@ -751,6 +748,22 @@ export function AtelierExperience({
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+function StudioPlaceholder() {
+  return (
+    <div className="w-full h-full atelier-radial-stage flex flex-col items-center justify-center px-6 text-center">
+      <div className="w-16 h-20 rounded-full border border-[#C8B288]/70 flex items-center justify-center mb-4">
+        <Flower2 className="w-6 h-6 text-[#4F6D52]" />
+      </div>
+      <p className="font-serif text-xl text-[#17271C]">
+        Loading Your 3D Bouquet…
+      </p>
+      <p className="text-xs text-[#4F6D52] mt-1">
+        Setting up flowers, wrapping paper, and studio light
+      </p>
     </div>
   );
 }
